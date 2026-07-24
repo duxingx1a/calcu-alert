@@ -1,0 +1,10 @@
+*.bak
+*.bak.*
+frp_0.68.1_windows_amd64/
+frpc.toml
+proxy_server.py
+api_server.py
+start_proxy.bat
+__pycache__/
+models/
+png/图/

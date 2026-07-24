@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcuAlert · 人群尿路结石筛查</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Noto+Sans+SC:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  color: #1a1a2e;
+  background: #fafbfc;
+  line-height: 1.7;
+}
+
+/* ===== Hero ===== */
+.hero {
+  text-align: center;
+  padding: 4rem 1.5rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.hero h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: .5rem;
+  line-height: 1.3;
+}
+.hero .venue {
+  display: inline-block;
+  background: #eef2f7;
+  color: #3b6ea5;
+  font-size: .8rem;
+  font-weight: 600;
+  padding: .25rem 1rem;
+  border-radius: 20px;
+  margin-bottom: 1.25rem;
+}
+.authors { font-size: .92rem; color: #333; margin-bottom: .4rem; line-height: 1.8; }
+.authors a { color: #3b6ea5; text-decoration: none; }
+.authors a:hover { text-decoration: underline; }
+.affiliations { font-size: .82rem; color: #666; margin-bottom: 1.5rem; }
+.buttons {
+  display: flex; justify-content: center; gap: .75rem; flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+.buttons a {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .55rem 1.25rem; border-radius: 6px;
+  font-size: .85rem; font-weight: 500; text-decoration: none;
+  transition: background .2s;
+}
+.buttons .primary { background: #3b6ea5; color: #fff; }
+.buttons .primary:hover { background: #2a4f7a; }
+.buttons .secondary { background: #f0f2f5; color: #1a1a2e; }
+.buttons .secondary:hover { background: #e4e7ec; }
+
+/* ===== Abstract (collapsed) ===== */
+.abstract { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 1.5rem; }
+.abstract-toggle {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .85rem; color: #3b6ea5; cursor: pointer; user-select: none;
+  border: 1px solid #dde3ed; border-radius: 6px;
+  padding: .3rem .8rem; background: #fff; transition: background .15s;
+}
+.abstract-toggle:hover { background: #f5f7fa; }
+.abstract-body { margin-top: .8rem; font-size: .93rem; color: #444; line-height: 1.8; }
+.abstract-body p { margin-bottom: .6rem; }
+
+/* ===== Abstract (collapsed) ===== */
+section { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+section h2 { font-size: 1.3rem; font-weight: 700; color: #222; margin-bottom: .75rem; }
+section p, section li { font-size: .93rem; color: #444; line-height: 1.8; }
+section p { margin-bottom: .75rem; }
+.figure { margin: 1.5rem 0; text-align: center; }
+.figure img { max-width: 100%; border-radius: 8px; border: 1px solid #e8ecf2; }
+.figure .label { font-size: .8rem; color: #666; margin-top: .4rem; }
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.bibtex { background: #f7f8fa; border-radius: 8px; padding: 1.2rem; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: .78rem; line-height: 1.6; overflow-x: auto; border: 1px solid #e8ecf2; }
+footer { text-align: center; padding: 2rem; font-size: .8rem; color: #888; border-top: 1px solid #e8ecf2; margin-top: 2rem; }
+
+@media (max-width: 640px) {
+  .results-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="venue">人群筛查 · 审稿中</div>
+  <h1>CalcuAlert:<br>基于常规体检生物标志物的集成学习<br>实现人群尿路结石筛查</h1>
+  <div class="authors">
+    Albert S. Kim<sup>1</sup>,
+    <a href="#">Author Two</a><sup>1</sup>,
+    <a href="#">Author Three</a><sup>1,2</sup>,
+    <a href="#">Author Four</a><sup>1</sup>⁣
+  </div>
+  <div class="affiliations">
+    <sup>1</sup> West China Hospital, Sichuan University &nbsp;·&nbsp;
+    <sup>2</sup> XXX Center
+  </div>
+  <div class="buttons">
+    <a class="primary" href="#">论文（即将上线）</a>
+    <a class="secondary" href="code.html">代码</a>
+    <a class="secondary" href="demo.html">在线演示</a>
+  </div>
+</div>
+
+<!-- Abstract (collapsed) -->
+<div class="abstract">
+  <div class="abstract-toggle" onclick="toggleAbstract()">
+    <span>摘要</span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="abstract-body" id="abstractBody">
+    <p>
+    全球每年有超过 1 亿人受到尿路结石的困扰。CT 作为诊断金标准，因辐射、成本及可及性限制，难以用于人群筛查。本文提出
+    <strong>CalcuAlert</strong>——一种无辐射筛查方案，利用 <strong>77 项常规体检生物标志物</strong>
+（血常规、肝功能、肾功能、尿常规等）及 <strong>双层堆叠集成模型</strong>
+（10 种异质基学习器 + XGBoost 元学习器）进行预测。
+    </p>
+    <p>
+    基于华西医院 <strong>622,800</strong> 名体检者（阳性率 3.52%）训练，并在
+<strong>181,336</strong> 名来自三个独立医疗中心的外部人群验证，模型在内部测试集上达到
+AUROC <strong>0.716</strong>，外部验证集上达到 <strong>0.687–0.694</strong>，
+展现了稳定的跨中心泛化能力。
+    </p>
+  </div>
+</div>
+
+<!-- Method -->
+<section>
+  <h2>方法概览</h2>
+  <p>
+    10 种基模型（LightGBM、XGBoost、CatBoost、HistGB、Logistic Regression、
+    Gaussian NB、Decision Tree、Random Forest、AdaBoost、MLP）经 3 折分层交叉验证训练，
+    其袋外预测与原始 77 个特征拼接为 87 维元特征矩阵，
+    输入 XGBoost 元学习器进行最终预测。类别不平衡（1:28）
+    通过代价敏感学习处理。
+  </p>
+  <div class="figure">
+    <svg viewBox="0 0 760 240" style="width:100%;max-width:760px">
+      <rect x="20" y="80" width="110" height="50" rx="6" fill="#e8ecf2"/>
+      <text x="75" y="110" text-anchor="middle" font-size="12" fill="#333" font-weight="600">77 项生物标志物</text>
+      <!-- 三条连接线 -->
+      <line x1="130" y1="105" x2="180" y2="60" stroke="#999" stroke-width="1.5"/>
+      <line x1="130" y1="105" x2="180" y2="105" stroke="#999" stroke-width="1.5"/>
+      <line x1="130" y1="105" x2="180" y2="150" stroke="#999" stroke-width="1.5"/>
+      <!-- Base models -->
+      <rect x="180" y="36" width="90" height="28" rx="4" fill="#3b6ea5" opacity=".55"/>
+      <text x="225" y="54" text-anchor="middle" font-size="9" fill="#fff">LightGBM</text>
+      <rect x="180" y="70" width="90" height="28" rx="4" fill="#3b6ea5" opacity=".55"/>
+      <text x="225" y="88" text-anchor="middle" font-size="9" fill="#fff">XGBoost</text>
+      <rect x="180" y="104" width="90" height="28" rx="4" fill="#3b6ea5" opacity=".55"/>
+      <text x="225" y="122" text-anchor="middle" font-size="9" fill="#fff">CatBoost</text>
+      <rect x="180" y="138" width="90" height="28" rx="4" fill="#3b6ea5" opacity=".55"/>
+      <text x="225" y="156" text-anchor="middle" font-size="9" fill="#fff" opacity=".7">... 7 more</text>
+      <!-- 汇聚连接 -->
+      <line x1="270" y1="50" x2="340" y2="105" stroke="#999" stroke-width="1"/>
+      <line x1="270" y1="84" x2="340" y2="105" stroke="#999" stroke-width="1"/>
+      <line x1="270" y1="118" x2="340" y2="105" stroke="#999" stroke-width="1"/>
+      <line x1="270" y1="152" x2="340" y2="105" stroke="#999" stroke-width="1"/>
+      <!-- 汇聚标注 -->
+      <line x1="340" y1="105" x2="380" y2="105" stroke="#999" stroke-width="1.5"/>
+      <text x="360" y="98" font-size="9" fill="#666" text-anchor="middle">10 个 OOF</text>
+      <text x="360" y="118" font-size="9" fill="#666" text-anchor="middle">+ 77 个特征</text>
+      <!-- Meta-learner -->
+      <rect x="380" y="78" width="100" height="54" rx="8" fill="#3b6ea5"/>
+      <text x="430" y="104" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">XGBoost</text>
+      <text x="430" y="120" text-anchor="middle" font-size="9" fill="#e8ecf2">元学习器</text>
+      <!-- 输出 -->
+      <line x1="480" y1="105" x2="530" y2="105" stroke="#999" stroke-width="1.5"/>
+      <rect x="530" y="85" width="80" height="40" rx="20" fill="#e8764a"/>
+      <text x="570" y="110" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">预测结果</text>
+    </svg>
+    <div class="label">双层堆叠集成学习框架</div>
+  </div>
+</section>
+
+<!-- Results -->
+<section>
+  <h2>主要结果</h2>
+  <div class="results-grid">
+    <div class="figure">
+      <img src="png/fig1_roc_all_models.png" alt="11 种模型 ROC 曲线对比" style="border:1px solid #e8ecf2;border-radius:8px;width:100%">
+      <div class="label">11 种模型的 ROC 曲线</div>
+    </div>
+    <div class="figure">
+      <img src="png/fig5b_calibration_curve.png" alt="校准曲线" style="border:1px solid #e8ecf2;border-radius:8px;width:100%">
+      <div class="label">校准曲线</div>
+    </div>
+  </div>
+  <p>
+    Stacking Ensemble 达到最高 AUROC（0.716）和最低 Brier 分数（0.196），
+    并在三个独立外部验证中心表现出稳健的泛化能力（AUROC 0.687–0.694）。
+  </p>
+</section>
+
+<!-- External Validation -->
+<section>
+  <h2>外部验证</h2>
+  <div class="figure">
+    <img src="png/fig_ext_validation_roc.png" alt="外部验证 ROC 曲线" style="max-width:100%;border:1px solid #e8ecf2;border-radius:8px">
+    <div class="label">三个独立外部验证队列的 ROC 曲线</div>
+  </div>
+</section>
+
+<!-- Citation -->
+<section>
+  <h2>引用</h2>
+  <div class="bibtex">
+@article{kim2025calcularert,<br>
+&nbsp;&nbsp;title&nbsp;&nbsp;&nbsp;= {CalcuAlert: Population-scale Screening for Urolithiasis Using Ensemble<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Machine Learning on Non-imaging Biomarkers from Routine Health Check-ups},<br>
+&nbsp;&nbsp;author&nbsp;= {Kim, Albert S. and ...},<br>
+&nbsp;&nbsp;journal = {},<br>
+&nbsp;&nbsp;year&nbsp;&nbsp;&nbsp;= {2025}
+}
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 &middot; 四川大学华西医院 &middot; 页面模板参考 <a href="https://nerfies.github.io/" style="color:#888">Nerfies</a>
+</footer>
+
+<script>
+function toggleAbstract() {
+  const body = document.getElementById('abstractBody');
+  const arrow = document.querySelector('.abstract-toggle .arrow');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  if (arrow) arrow.style.transform = body.style.display === 'none' ? 'rotate(-90deg)' : '';
+}
+</script>
+
+</body>
+</html>
