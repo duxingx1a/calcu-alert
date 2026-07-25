@@ -48,11 +48,11 @@ const CATEGORY_OPTIONS = {
 };
 
 const SAMPLES = [
-  { name: '病例 A', values: { Gender: 0, Uric_WBC: 0, Age: 31, Uric_specific_gravity: 1.013, Uric_conductivity: 14.2, Uric_RBC: 0, Waist_to_hip_ratio: 0.92, Uric_PH: 6.5, BRI: 4.36, Systolic_BP: 118 } },
-  { name: '病例 B', values: { Gender: 1, Uric_WBC: 1, Age: 54, Uric_specific_gravity: 1.01, Uric_conductivity: 25, Uric_RBC: 0, Waist_to_hip_ratio: 0.96, Uric_PH: 7.5, BRI: 4.8, Systolic_BP: 164 } },
-  { name: '病例 C', values: { Gender: 0, Uric_WBC: 28, Age: 45, Uric_specific_gravity: 1.02, Uric_conductivity: 18.5, Uric_RBC: 5, Waist_to_hip_ratio: 0.88, Uric_PH: 6.0, BRI: 5.2, Systolic_BP: 135 } },
-  { name: '病例 D', values: { Gender: 1, Uric_WBC: 3, Age: 62, Uric_specific_gravity: 1.005, Uric_conductivity: 8.7, Uric_RBC: 0, Waist_to_hip_ratio: 0.99, Uric_PH: 7.0, BRI: 6.1, Systolic_BP: 148 } },
-  { name: '病例 E', values: { Gender: 0, Uric_WBC: 12, Age: 38, Uric_specific_gravity: 1.018, Uric_conductivity: 21.3, Uric_RBC: 2, Waist_to_hip_ratio: 0.85, Uric_PH: 5.5, BRI: 3.9, Systolic_BP: 110 } }
+  { name: '病例 #1', values: { Gender: 0, Uric_WBC: 0, Age: 31, Uric_specific_gravity: 1.013, Uric_conductivity: 14.2, Uric_RBC: 0, Waist_to_hip_ratio: 0.92, Uric_PH: 6.5, BRI: 4.36, Systolic_BP: 118 } },
+  { name: '病例 #2', values: { Gender: 1, Uric_WBC: 1, Age: 54, Uric_specific_gravity: 1.01, Uric_conductivity: 25, Uric_RBC: 0, Waist_to_hip_ratio: 0.96, Uric_PH: 7.5, BRI: 4.8, Systolic_BP: 164 } },
+  { name: '病例 #3', values: { Gender: 0, Uric_WBC: 28, Age: 45, Uric_specific_gravity: 1.02, Uric_conductivity: 18.5, Uric_RBC: 5, Waist_to_hip_ratio: 0.88, Uric_PH: 6.0, BRI: 5.2, Systolic_BP: 135 } },
+  { name: '病例 #4', values: { Gender: 1, Uric_WBC: 3, Age: 62, Uric_specific_gravity: 1.005, Uric_conductivity: 8.7, Uric_RBC: 0, Waist_to_hip_ratio: 0.99, Uric_PH: 7.0, BRI: 6.1, Systolic_BP: 148 } },
+  { name: '病例 #5', values: { Gender: 0, Uric_WBC: 12, Age: 38, Uric_specific_gravity: 1.018, Uric_conductivity: 21.3, Uric_RBC: 2, Waist_to_hip_ratio: 0.85, Uric_PH: 5.5, BRI: 3.9, Systolic_BP: 110 } }
 ];
 
 function featureLabel(key) {

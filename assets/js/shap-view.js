@@ -91,7 +91,12 @@ function renderTable(result) {
 
 /* ========== SHAP Force Plot（单样本标准红蓝推力图） ========== */
 function renderForcePlot(result) {
-  const { c, w, h } = ctx('forcePlot', 720, 130);
+  // 使用父容器宽度实现自适应
+  const canvas = document.querySelector('#forcePlot');
+  const wrap = canvas.closest('.chart-wrap');
+  if (!wrap) return;
+  const cw = wrap.clientWidth - 2;   // 减去 border
+  const { c, w, h } = ctx('forcePlot', Math.max(cw, 280), 130);
   const items = [...result.shap.contributions]
     .sort((a, b) => a.shap_value - b.shap_value); // 负→正
   if (!items.length) return;
