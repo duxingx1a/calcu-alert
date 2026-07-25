@@ -1,235 +1,132 @@
-/* ---------- SHAP 红/蓝 ---------- */
-const SHAP_RED   = '#FF0D57';
-const SHAP_BLUE  = '#1E88E5';
-const SHAP_RED_BG   = 'rgba(255,13,87,0.10)';
-const SHAP_BLUE_BG  = 'rgba(30,136,229,0.10)';
+/* ================================================================
+ * CalcuAlert · SHAP 可视化模块
+ * 后端 shap 库 + matplotlib 生成 PNG 图片，前端仅负责加载展示
+ * ================================================================ */
 
-/* ---------- utils ---------- */
+/* ---------- 工具 ---------- */
 function fmt(v, d) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d || 3); }
-function rrect(ctx, x, y, w, h, r) {
-  if (w <= 0 || h <= 0) return;  // 防御：非正尺寸跳过
-  r = Math.max(0, Math.min(r, w / 2, h / 2));
-  if (r <= 0) return;
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.arcTo(x + w, y, x + w, y + r, r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-  ctx.lineTo(x + r, y + h);
-  ctx.arcTo(x, y + h, x, y + h - r, r);
-  ctx.lineTo(x, y + r);
-  ctx.arcTo(x, y, x + r, y, r);
-  ctx.closePath();
+
+/* ---------- 颜色常量 ---------- */
+const SHAP_RED  = '#FF0D57';
+const SHAP_BLUE = '#1E88E5';
+
+/* ---------- 结果面板 ---------- */
+function panel() { return document.querySelector('#resultPanel'); }
+function toggleBar() { return document.querySelector('#resultToggleBar'); }
+
+export function toggleResultPanel(show) {
+  const s = show ? '' : 'none';
+  panel().style.display = s;
+  toggleBar().style.display = s;
 }
 
-/* ---------- canvas ---------- */
-function ctx(id, cw, ch) {
-  const c = document.querySelector(`#${id}`);
-  const r = window.devicePixelRatio || 1;
-  const w = c.clientWidth || cw || 700;
-  const h = c.clientHeight || ch || 400;
-  c.width = w * r; c.height = h * r;
-  c.style.width = w + 'px'; c.style.height = h + 'px';
-  c.getContext('2d').scale(r, r);
-  return { c: c.getContext('2d'), w, h };
-}
+/* ---------- 核心：渲染预测结果 ---------- */
+export function renderPrediction(result) {
+  /* 概要 */
+  document.querySelector('#resultSummary').innerHTML = `
+    <div class="result-card">
+      <p><strong>患病概率</strong><br><span class="prob-big">${(result.probability * 100).toFixed(2)}%</span></p>
+      <p class="badge ${result.classification === '阳性' ? 'pos' : 'neg'}">判定: ${result.classification === '阳性' ? '高风险' : '低风险'}</p>
+      <p class="threshold-note">阈值: ${(result.threshold * 100).toFixed(1)}%</p>
+    </div>`;
 
-/* ---------- 显隐控制（纯 style.display，与选填特征完全一致） ---------- */
-const panel  = () => document.querySelector('#resultPanel');
-const bar    = () => document.querySelector('#resultToggleBar');
-const btn    = () => document.querySelector('#toggleResult');
+  /* 基模型概率 */
+  const baseHtml = (result.base_model_probabilities || [])
+    .map((p, i) =>
+      `<div class="prob-cell">
+        <div class="prob-label">${(result.base_model_order || [])[i] || `M${i}`}</div>
+        <div class="prob-bar"><div class="prob-fill" style="width:${(p * 100).toFixed(0)}%"></div></div>
+        <div class="prob-val">${(p * 100).toFixed(2)}%</div>
+      </div>`)
+    .join('');
+  document.querySelector('#baseProbabilities').innerHTML = baseHtml;
 
-function showResult() {
-  panel().style.display = '';
-  bar().style.display = '';
-  btn().textContent = '收起结果';
-}
-
-function toggleResultPanel() {
-  if (panel().style.display === 'none') {
-    panel().style.display = '';
-    btn().textContent = '收起结果';
-    panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
+  /* 插补提示 */
+  const fillNote = document.querySelector('#imputationNote');
+  if (result.imputed_count && result.imputed_count > 0) {
+    fillNote.textContent = `注意：有 ${result.imputed_count} 个缺失值已被中位数插补。`;
+    fillNote.style.display = '';
   } else {
-    panel().style.display = 'none';
-    btn().textContent = '展开结果';
+    fillNote.style.display = 'none';
   }
-}
+  document.querySelector('#featureCount').textContent = `输入特征: ${result.feature_values.length}`;
 
-function clearResult() {
-  panel().style.display = 'none';
-  bar().style.display = 'none';
-}
-
-/* ---------- 主渲染 ---------- */
-function renderPrediction(result) {
-  const prob = Number(result.probability);
-  const pos = result.classification === '阳性';
-  document.querySelector('#resultSummary').innerHTML = `<div class="result-lead ${pos ? 'positive' : 'negative'}"><div class="eyebrow">尿路结石患病风险概率</div><strong>${(prob * 100).toFixed(1)}%</strong><span>${result.classification}（阈值 ${result.threshold}）</span></div>`;
-  document.querySelector('#imputationNote').hidden = true;
-  renderProbs(result);
-  renderTable(result);
-  showResult();
-
-  // 显示面板后立即强制重排，确保 canvas 父容器有真实尺寸
-  panel().offsetHeight;
-
-  // 先尝试直接渲染；若尺寸仍为 0 则延迟一帧重试
-  try { renderForcePlot(result); } catch (e) { console.error('Force Plot 渲染失败:', e); }
-  try { renderWaterfall(result); } catch (e) { console.error('Waterfall 渲染失败:', e); }
-
-  panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-/* ---------- 概率水平条（SHAP 红/蓝） ---------- */
-function renderProbs(result) {
-  const models = result.base_model_order.map((name, i) => ({ name, pct: result.base_model_probabilities[i] * 100 }));
-  document.querySelector('#baseProbabilities').innerHTML = models.map(m => {
-    const w = Math.max(m.pct, 3);
-    const color = m.pct >= 50 ? SHAP_RED : SHAP_BLUE;
-    return `<div class="prob-row"><span class="prob-label">${m.name}</span><div class="prob-bar-track"><div class="prob-bar-fill" style="width:${w}%;background:${color}"></div></div><strong class="prob-val">${m.pct.toFixed(1)}%</strong></div>`;
+  /* ---- SHAP 贡献表格 ---- */
+  const contributions = result.shap?.contributions || [];
+  const sorted = [...contributions].sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));
+  const tbody = sorted.map((it, i) => {
+    const cls = it.shap_value >= 0 ? 'contribution-positive' : 'contribution-negative';
+    const typeMap = { base_model_probability: '基模型概率', clinical_direct: '临床直接特征' };
+    const val = it.value !== undefined && it.value !== null ? (typeof it.value === 'number' ? fmt(it.value) : String(it.value)) : '—';
+    return `<tr>
+      <td>${i + 1}</td><td>${it.key}</td><td>${typeMap[it.source_type] || it.source_type || '—'}</td>
+      <td>${val}</td>
+      <td class="${cls}">${it.shap_value >= 0 ? '+' : ''}${fmt(it.shap_value, 6)}</td>
+    </tr>`;
   }).join('');
+
+  const additivity = result.shap?.additivity_error;
+  const addRow = additivity !== undefined && Math.abs(additivity) > 1e-6
+    ? `<tr><td colspan="4" style="color:var(--muted)">可加性误差</td><td style="color:var(--muted)">${fmt(additivity, 6)}</td></tr>` : '';
+  document.querySelector('#shapTableBody').innerHTML = tbody + addRow;
+
+  /* ---- SHAP 图片（shap 库原生生成） ---- */
+  renderShapImages(result);
+
+  /* 显示面板 */
+  panel().offsetHeight;
+  toggleResultPanel(true);
 }
 
-/* ---------- 贡献表 ---------- */
-function renderTable(result) {
-  const rows = [...result.shap.contributions].sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));
-  document.querySelector('#shapTableBody').innerHTML = rows.map((item, i) => `<tr><td>${i + 1}</td><td>${item.label}</td><td>${item.source_type === 'base_model_probability' ? '基模型概率' : '临床直接项'}</td><td>${fmt(item.value)}</td><td class="${item.shap_value >= 0 ? 'contribution-positive' : 'contribution-negative'}">${item.shap_value >= 0 ? '+' : ''}${fmt(item.shap_value, 5)}</td></tr>`).join('');
-}
+/* ---------- 加载 shap 库生成的原生图片 ---------- */
+function renderShapImages(result) {
+  const images = result.shap_images || {};
 
-/* ========== SHAP Force Plot（单样本标准红蓝推力图） ========== */
-function renderForcePlot(result) {
-  const canvas = document.querySelector('#forcePlot');
-  if (!canvas) { console.warn('renderForcePlot: #forcePlot canvas 不存在'); return; }
-  const wrap = canvas.closest('.chart-wrap');
-  if (!wrap) { console.warn('renderForcePlot: .chart-wrap 父容器不存在'); return; }
-
-  // 用 getBoundingClientRect 强制同步布局（解决 hidden→visible 时 clientWidth=0 的问题）
-  const rect = wrap.getBoundingClientRect();
-  const w = Math.max(rect.width - 2, 280);
-  const h = 130;
-  const r = window.devicePixelRatio || 1;
-
-  console.log('Force Plot 画布尺寸:', { rectWidth: rect.width, w, h, r });
-
-  canvas.width = w * r;
-  canvas.height = h * r;
-  canvas.style.width = w + 'px';
-  canvas.style.height = h + 'px';
-
-  const c = canvas.getContext('2d');
-  c.setTransform(r, 0, 0, r, 0, 0);  // 重置 transform 并设备倍率缩放
-  const items = [...result.shap.contributions]
-    .sort((a, b) => a.shap_value - b.shap_value); // 负→正
-  console.log('Force Plot 数据项:', items.length);
-  if (!items.length) { console.warn('renderForcePlot: 无 SHAP 贡献数据'); return; }
-
-  const baseV = result.shap.base_value;
-  const cum = [baseV];
-  for (let i = 0; i < items.length; i++) cum.push(cum[i] + items[i].shap_value);
-  // 累计和并非单调：负贡献使 cum 下降，正贡献使其回升
-  // 必须以实际 min/max 为 x 轴范围，否则部分段出现负宽度 → arcTo 负半径报错
-  const xMin = Math.min(...cum), xMax = Math.max(...cum);
-  const pad = Math.max((xMax - xMin) * 0.08, 0.02);
-  const L = 28, R = w - 28, barT = 44, barH = 36;
-  const xf = (v) => L + ((v - xMin + pad) / (xMax - xMin + 2 * pad)) * (R - L);
-
-  c.clearRect(0, 0, w, h);
-
-  // 细灰底条（手动圆角，兼容旧浏览器）
-  rrect(c, L, barT, R - L, barH, 3);
-  c.fillStyle = '#eef1f0'; c.fill();
-
-  // 红/蓝特征段
-  for (let i = 0; i < items.length; i++) {
-    const x0 = xf(cum[i]), x1 = xf(cum[i + 1]);
-    if (Math.abs(x1 - x0) < 0.5) continue;
-    rrect(c, x0, barT, x1 - x0, barH, 2);
-    c.fillStyle = items[i].shap_value >= 0 ? SHAP_RED : SHAP_BLUE;
-    c.fill();
-
-    // 段内标签（如果能放下）
-    const segW = Math.abs(x1 - x0);
-    if (segW > 28) {
-      const midX = (x0 + x1) / 2;
-      c.fillStyle = '#fff'; c.textAlign = 'center'; c.font = '9px system-ui';
-      const lbl = items[i].key.length > 10 ? items[i].key.slice(0, 9) + '…' : items[i].key;
-      c.fillText(lbl, midX, barT + barH / 2 + 3);
+  // Force Plot
+  const forceImg = document.querySelector('#forcePlotImg');
+  if (forceImg) {
+    if (images.force_plot) {
+      forceImg.src = images.force_plot;
+      forceImg.style.display = 'block';
+      forceImg.onerror = () => {
+        forceImg.style.display = 'none';
+        console.warn('Force Plot 图片加载失败');
+      };
+    } else {
+      forceImg.style.display = 'none';
+      console.warn('后端未返回 Force Plot 图片');
     }
   }
 
-  // 基线值竖线 + 标签
-  const bx = xf(baseV);
-  c.strokeStyle = '#222'; c.lineWidth = 1.2;
-  c.beginPath(); c.moveTo(bx, barT - 6); c.lineTo(bx, barT + barH + 6); c.stroke();
-  c.fillStyle = '#222'; c.textAlign = 'center'; c.font = 'bold 10px ui-monospace';
-  c.fillText(`E[f(x)]=${fmt(baseV)}`, bx, barT - 10);
-
-  // 输出值标注（最右端）
-  const ex = xf(cum[cum.length - 1]);
-  c.fillStyle = '#111'; c.textAlign = 'center'; c.font = 'bold 10px ui-monospace';
-  c.fillText(`f(x)=${fmt(cum[cum.length - 1])}`, ex, barT + barH + 16);
-
-  // X轴
-  c.fillStyle = '#6b7f76'; c.textAlign = 'center'; c.font = '9px ui-monospace';
-  for (let i = 0; i <= 5; i++) {
-    const gx = L + (R - L) * i / 5;
-    c.fillText((xMin - pad + (xMax - xMin + 2 * pad) * i / 5).toFixed(2), gx, barT + barH + 28);
+  // Waterfall
+  const wfImg = document.querySelector('#waterfallPlotImg');
+  if (wfImg) {
+    if (images.waterfall) {
+      wfImg.src = images.waterfall;
+      wfImg.style.display = 'block';
+      wfImg.onerror = () => {
+        wfImg.style.display = 'none';
+        console.warn('Waterfall 图片加载失败');
+      };
+    } else {
+      wfImg.style.display = 'none';
+      console.warn('后端未返回 Waterfall 图片');
+    }
   }
 }
 
-/* ========== SHAP 瀑布图 ========== */
-function renderWaterfall(result) {
-  const canvas = document.querySelector('#waterfallPlot');
-  if (!canvas) { console.warn('renderWaterfall: #waterfallPlot canvas 不存在'); return; }
-  const wrap = canvas.closest('.chart-wrap');
-  if (!wrap) { console.warn('renderWaterfall: .chart-wrap 父容器不存在'); return; }
+/* ---------- 清空结果 ---------- */
+export function clearResult() {
+  toggleResultPanel(false);
+  document.querySelector('#resultSummary').innerHTML = '';
+  document.querySelector('#baseProbabilities').innerHTML = '';
+  document.querySelector('#featureCount').textContent = '';
+  document.querySelector('#imputationNote').style.display = 'none';
+  document.querySelector('#shapTableBody').innerHTML = '';
 
-  // 用 getBoundingClientRect 强制同步布局（解决 hidden→visible 时 clientWidth=0 的问题）
-  const rect = wrap.getBoundingClientRect();
-  const w = Math.max(rect.width - 2, 400);
-  const h = 380;
-  const r = window.devicePixelRatio || 1;
-
-  console.log('Waterfall 画布尺寸:', { rectWidth: rect.width, w, h, r });
-
-  canvas.width = w * r;
-  canvas.height = h * r;
-  canvas.style.width = w + 'px';
-  canvas.style.height = h + 'px';
-
-  const c = canvas.getContext('2d');
-  c.setTransform(r, 0, 0, r, 0, 0);
-
-  const items = [...result.shap.contributions]
-    .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
-    .slice(0, 14);
-
-  const L = 200, R = w - 24, T = 28, B = h - 20;
-  const rh = Math.max(23, (B - T) / items.length);
-  const mx = Math.max(...items.map(i => Math.abs(i.shap_value)), 1e-9);
-  const midX = L + (R - L) * 0.42;
-  const bw = (R - L) * 0.32;
-
-  c.clearRect(0, 0, w, h);
-  c.strokeStyle = '#dfe6e1'; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(midX, T - 6); c.lineTo(midX, B + 4); c.stroke();
-
-  items.forEach((it, i) => {
-    const y = T + i * rh;
-    const barW = (Math.abs(it.shap_value) / mx) * bw;
-    const pos = it.shap_value >= 0;
-    c.fillStyle = pos ? SHAP_RED : SHAP_BLUE;
-    c.fillRect(pos ? midX : midX - barW, y + 3, barW, rh - 6);
-
-    c.fillStyle = '#334155'; c.textAlign = 'right'; c.font = '11px system-ui';
-    c.fillText(it.key, L - 8, y + rh * 0.62);
-
-    c.fillStyle = '#37474f'; c.font = '10px ui-monospace';
-    if (pos) { c.textAlign = 'left'; c.fillText(`+${fmt(it.shap_value, 4)}`, midX + barW + 5, y + rh * 0.62); }
-    else     { c.textAlign = 'right'; c.fillText(fmt(it.shap_value, 4), midX - barW - 5, y + rh * 0.62); }
-  });
+  // 清除图片
+  const forceImg = document.querySelector('#forcePlotImg');
+  if (forceImg) { forceImg.src = ''; forceImg.style.display = 'none'; }
+  const wfImg = document.querySelector('#waterfallPlotImg');
+  if (wfImg) { wfImg.src = ''; wfImg.style.display = 'none'; }
 }
-
-export { clearResult, renderPrediction, toggleResultPanel };
