@@ -69,11 +69,12 @@ function renderField(definition, index) {
   const detail = featureLabel(key);
   const required = TOP_10.includes(key);
   const options = CATEGORY_OPTIONS[key];
-  const fallback = required ? '' : defaultValue(definition);
+  const raw = defaultValue(definition);
+  const fallback = required ? '' : (raw === '' || raw === null || raw === undefined ? '' : Number(raw).toFixed(3));
   const control = options
     ? `<select id="feature-${index}" data-key="${key}" data-default="${typeof definition.default === 'object' ? 'gender' : ''}" data-autofill="${required ? 'false' : 'true'}" aria-label="${detail[0]}"><option value="">请选择</option>${options.map(([value, label]) => `<option value="${value}" ${String(fallback) === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`
     : `<input id="feature-${index}" data-key="${key}" data-default="${typeof definition.default === 'object' ? 'gender' : ''}" data-autofill="${required ? 'false' : 'true'}" value="${fallback}" type="number" step="any" inputmode="decimal" aria-label="${detail[0]}" />`;
-  return `<div class="field ${required ? 'field-required' : ''}"><label for="feature-${index}">${detail[0]} ${required ? '<b>必填</b>' : '<span>选填</span>'}<small>${detail[1]}</small></label>${control}<p class="field-error" id="error-${index}"></p></div>`;
+  return `<div class="field ${required ? 'field-required' : ''}"><label for="feature-${index}">${detail[0]} ${required ? '<b>必填</b>' : ''}<small>${detail[1]}</small></label>${control}<p class="field-error" id="error-${index}"></p></div>`;
 }
 
 function renderForm(metadata) {
