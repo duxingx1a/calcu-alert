@@ -1,4 +1,4 @@
-const API_BASE = 'https://8.137.187.63';
+const API_BASE = 'https://api.ydl66.top';
 
 async function requestJson(path, options = {}) {
   const controller = new AbortController();
