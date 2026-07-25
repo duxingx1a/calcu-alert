@@ -1,3 +1,9 @@
+/* ---------- SHAP 红/蓝 ---------- */
+const SHAP_RED   = '#FF0D57';
+const SHAP_BLUE  = '#1E88E5';
+const SHAP_RED_BG   = 'rgba(255,13,87,0.10)';
+const SHAP_BLUE_BG  = 'rgba(30,136,229,0.10)';
+
 /* ---------- utils ---------- */
 function fmt(v, d) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d || 3); }
 
@@ -13,35 +19,31 @@ function ctx(id, cw, ch) {
   return { c: c.getContext('2d'), w, h };
 }
 
-/* ---------- 显隐控制 ---------- */
+/* ---------- 显隐控制（纯 style.display，与选填特征完全一致） ---------- */
 const panel  = () => document.querySelector('#resultPanel');
 const bar    = () => document.querySelector('#resultToggleBar');
 const btn    = () => document.querySelector('#toggleResult');
 
 function showResult() {
-  // 面板显示
-  panel().classList.remove('result-hidden');
-  // 切换条始终显示
-  bar().classList.remove('result-hidden');
+  panel().style.display = '';
+  bar().style.display = '';
   btn().textContent = '收起结果';
 }
 
-// 仅切换面板，切换条保持可见
 function toggleResultPanel() {
-  if (panel().classList.contains('result-hidden')) {
-    panel().classList.remove('result-hidden');
+  if (panel().style.display === 'none') {
+    panel().style.display = '';
     btn().textContent = '收起结果';
     panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
-    panel().classList.add('result-hidden');
+    panel().style.display = 'none';
     btn().textContent = '展开结果';
   }
-  // bar 不变，始终可见
 }
 
 function clearResult() {
-  panel().classList.add('result-hidden');
-  bar().classList.add('result-hidden');
+  panel().style.display = 'none';
+  bar().style.display = 'none';
 }
 
 /* ---------- 主渲染 ---------- */
@@ -57,12 +59,12 @@ function renderPrediction(result) {
   panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-/* ---------- 概率水平条 ---------- */
+/* ---------- 概率水平条（SHAP 红/蓝） ---------- */
 function renderProbs(result) {
   const models = result.base_model_order.map((name, i) => ({ name, pct: result.base_model_probabilities[i] * 100 }));
   document.querySelector('#baseProbabilities').innerHTML = models.map(m => {
-    const w = Math.max(m.pct, 4);
-    const color = m.pct >= 50 ? '#d95a3e' : '#377699';
+    const w = Math.max(m.pct, 3);
+    const color = m.pct >= 50 ? SHAP_RED : SHAP_BLUE;
     return `<div class="prob-row"><span class="prob-label">${m.name}</span><div class="prob-bar-track"><div class="prob-bar-fill" style="width:${w}%;background:${color}"></div></div><strong class="prob-val">${m.pct.toFixed(1)}%</strong></div>`;
   }).join('');
 }
@@ -113,7 +115,7 @@ function renderDecision(result) {
     const y = T + i * rh;
     const x0 = xf(cum[i]), x1 = xf(cum[i + 1]);
     const rx = Math.min(x0, x1), rw = Math.max(Math.abs(x1 - x0), 2);
-    c.fillStyle = items[i].shap_value >= 0 ? 'rgba(232,118,95,0.18)' : 'rgba(82,123,156,0.18)';
+    c.fillStyle = items[i].shap_value >= 0 ? SHAP_RED_BG : SHAP_BLUE_BG;
     c.fillRect(rx, y + 3, rw, rh - 6);
 
     c.fillStyle = '#1f2e2c'; c.textAlign = 'right'; c.font = '11px system-ui';
@@ -164,7 +166,7 @@ function renderWaterfall(result) {
     const y = T + i * rh;
     const barW = (Math.abs(it.shap_value) / mx) * bw;
     const pos = it.shap_value >= 0;
-    c.fillStyle = pos ? '#c45142' : '#327596';
+    c.fillStyle = pos ? SHAP_RED : SHAP_BLUE;
     c.fillRect(pos ? midX : midX - barW, y + 3, barW, rh - 6);
 
     c.fillStyle = '#334155'; c.textAlign = 'right'; c.font = '11px system-ui';
