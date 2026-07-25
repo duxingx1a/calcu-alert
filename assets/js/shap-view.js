@@ -75,74 +75,99 @@ function renderTable(result) {
   document.querySelector('#shapTableBody').innerHTML = rows.map((item, i) => `<tr><td>${i + 1}</td><td>${item.label}</td><td>${item.source_type === 'base_model_probability' ? '基模型概率' : '临床直接项'}</td><td>${fmt(item.value)}</td><td class="${item.shap_value >= 0 ? 'contribution-positive' : 'contribution-negative'}">${item.shap_value >= 0 ? '+' : ''}${fmt(item.shap_value, 5)}</td></tr>`).join('');
 }
 
-/* ========== SHAP 决策路径（阶梯折线） ========== */
+/* ========== SHAP 决策图（标准 SHAP 样式：特征值红蓝连续染色） ========== */
 function renderDecision(result) {
   const { c, w, h } = ctx('decisionPlot', 720, 520);
   const items = [...result.shap.contributions]
     .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
     .slice(0, 20);
 
-  const L = 200, R = w - 32, T = 38, B = h - 34;
-  const rh = Math.max(21, (B - T) / items.length);
+  const L = 200, R = w - 38, T = 34, B = h - 34;
+  const rh = Math.max(22, (B - T) / items.length);
   const baseV = result.shap.base_value;
   const predV = result.shap.prediction_explained;
-  const xMin = Math.min(baseV, predV) - 0.2;
-  const xMax = Math.max(baseV, predV) + 0.2;
+  const pad = Math.abs(predV - baseV) * 0.3 + 0.1;
+  const xMin = Math.min(baseV, predV) - pad;
+  const xMax = Math.max(baseV, predV) + pad;
   const xf = (v) => L + ((v - xMin) / (xMax - xMin)) * (R - L);
   const cum = [baseV];
   for (let i = 0; i < items.length; i++) cum.push(cum[i] + items[i].shap_value);
 
+  // 归一化特征值 -> [0,1] 用于红蓝色阶
+  const vals = items.map(it => typeof it.value === 'number' && !Number.isNaN(it.value) ? it.value : 0);
+  const vMin = Math.min(...vals), vMax = Math.max(...vals);
+  const vRng = vMax - vMin || 1;
+  const norm = (v) => (v - vMin) / vRng;
+
+  // SHAP 特征值色阶：低值=蓝，高值=红
+  function featureColor(v) {
+    const t = norm(v);
+    const r = Math.round(30 + (225) * t);    // 30→255
+    const g = Math.round(136 - (100) * t);    // 136→36
+    const b_ = Math.round(229 - (205) * t);    // 229→24
+    return `rgb(${r},${g},${b_})`;
+  }
+
   c.clearRect(0, 0, w, h);
 
-  // 竖网格
-  c.strokeStyle = '#e7ece8'; c.lineWidth = 0.6;
-  for (let i = 0; i <= 5; i++) {
-    const gx = L + (R - L) * i / 5;
-    c.beginPath(); c.moveTo(gx, T - 6); c.lineTo(gx, B + 2); c.stroke();
+  // 网格
+  c.strokeStyle = '#e9edea'; c.lineWidth = 0.5; c.setLineDash([4, 6]);
+  for (let i = 0; i <= 4; i++) {
+    const gx = L + (R - L) * i / 4;
+    c.beginPath(); c.moveTo(gx, T - 6); c.lineTo(gx, B + 6); c.stroke();
   }
-  c.fillStyle = '#869889'; c.textAlign = 'center'; c.font = '10px ui-monospace';
-  for (let i = 0; i <= 5; i++)
-    c.fillText((xMin + (xMax - xMin) * i / 5).toFixed(2), L + (R - L) * i / 5, B + 15);
-
-  // 基线虚线
-  const bx = xf(baseV);
-  c.strokeStyle = '#b4c4b9'; c.setLineDash([5, 5]); c.lineWidth = 1;
-  c.beginPath(); c.moveTo(bx, T - 10); c.lineTo(bx, B + 3); c.stroke();
   c.setLineDash([]);
 
-  // 背景色条 + 特征名
-  for (let i = 0; i < items.length; i++) {
-    const y = T + i * rh;
-    const x0 = xf(cum[i]), x1 = xf(cum[i + 1]);
-    const rx = Math.min(x0, x1), rw = Math.max(Math.abs(x1 - x0), 2);
-    c.fillStyle = items[i].shap_value >= 0 ? SHAP_RED_BG : SHAP_BLUE_BG;
-    c.fillRect(rx, y + 3, rw, rh - 6);
+  // 基线虚线（SHAP 风格：黑色虚线）
+  const bx = xf(baseV);
+  c.strokeStyle = '#000'; c.setLineDash([5, 4]); c.lineWidth = 1.2;
+  c.beginPath(); c.moveTo(bx, T - 8); c.lineTo(bx, B + 4); c.stroke();
+  c.setLineDash([]);
 
-    c.fillStyle = '#1f2e2c'; c.textAlign = 'right'; c.font = '11px system-ui';
-    const lbl = items[i].key;
-    c.fillText(c.measureText(lbl).width > (L - 14) ? lbl.slice(0, 12) + '…' : lbl, L - 8, y + rh * 0.6);
-  }
-
-  // 阶梯折线
-  c.strokeStyle = '#112b23'; c.lineWidth = 2.4; c.lineJoin = 'round'; c.lineCap = 'round';
-  c.beginPath();
-  c.moveTo(bx, T);
+  // 每特征：水平线段，颜色=特征值（红高蓝低）
   for (let i = 0; i < items.length; i++) {
     const y = T + i * rh + rh / 2;
-    c.lineTo(xf(cum[i]), y);
-    c.lineTo(xf(cum[i + 1]), y);
+    const x0 = xf(cum[i]), x1 = xf(cum[i + 1]);
+    c.strokeStyle = featureColor(items[i].value);
+    c.lineWidth = 7; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke();
   }
-  c.lineTo(xf(predV), B);
-  c.stroke();
 
-  // 终点圆
-  c.fillStyle = '#0d1f19';
-  c.beginPath(); c.arc(xf(predV), B, 4.5, 0, Math.PI * 2); c.fill();
+  // 终点标记
+  const ex = xf(predV);
+  c.fillStyle = '#000';
+  c.beginPath(); c.arc(ex, B - rh / 2 + 2, 5, 0, Math.PI * 2); c.fill();
 
-  c.fillStyle = '#2a5a46'; c.font = 'bold 11px ui-monospace'; c.textAlign = 'left';
-  c.fillText(`输出 ${fmt(predV)}`, xf(predV) + 10, B + 3);
-  c.fillStyle = '#778f81'; c.font = '10px ui-monospace'; c.textAlign = 'right';
-  c.fillText(`基线 ${fmt(baseV)}`, bx - 8, B + 3);
+  // 特征标签
+  c.fillStyle = '#2c3e3a'; c.textAlign = 'right'; c.font = '11px system-ui';
+  items.forEach((it, i) => {
+    const y = T + i * rh + rh / 2;
+    const lbl = it.key.length > 16 ? it.key.slice(0, 15) + '…' : it.key;
+    c.fillText(lbl, L - 8, y + 4);
+  });
+
+  // X轴标签
+  c.fillStyle = '#5c6f68'; c.textAlign = 'center'; c.font = '10px ui-monospace';
+  for (let i = 0; i <= 4; i++) {
+    const gx = L + (R - L) * i / 4;
+    c.fillText((xMin + (xMax - xMin) * i / 4).toFixed(2), gx, B + 10);
+  }
+
+  // 底部标注
+  c.fillStyle = '#374f45'; c.font = 'bold 10px ui-monospace'; c.textAlign = 'right';
+  c.fillText(`E[f(x)]=${fmt(baseV)}`, bx - 6, B - 4);
+  c.fillText(`f(x)=${fmt(predV)}`, ex - 12, B - 14);
+
+  // 色阶图例
+  const lx = R - 80, lw = 60, lh = 8, ly = 8;
+  const grd = c.createLinearGradient(lx, 0, lx + lw, 0);
+  grd.addColorStop(0, SHAP_BLUE); grd.addColorStop(1, SHAP_RED);
+  c.fillStyle = grd;
+  c.fillRect(lx, ly, lw, lh);
+  c.strokeStyle = '#ccc'; c.lineWidth = 0.5; c.strokeRect(lx, ly, lw, lh);
+  c.fillStyle = '#5c6f68'; c.textAlign = 'center'; c.font = '9px system-ui';
+  c.fillText('低', lx - 10, ly + 9);
+  c.fillText('高', lx + lw + 10, ly + 9);
 }
 
 /* ========== SHAP 瀑布图 ========== */
