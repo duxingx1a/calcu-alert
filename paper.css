@@ -180,6 +180,7 @@ button { cursor: pointer; font: inherit; }
 }
 .lightbox__close:hover { background: rgba(255,255,255,.25); }
 .lightbox__stage {
+  position: relative; z-index: 1;
   min-height: 100vh; min-width: 100vw;
   display: flex; align-items: center; justify-content: center;
   padding: 48px; box-sizing: border-box;
