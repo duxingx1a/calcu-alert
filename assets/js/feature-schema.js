@@ -9,7 +9,7 @@ const GROUPS = {
 };
 
 const LABELS = {
-  Gender: ['性别', '', 'category'], Uric_WBC: ['尿白细胞', '/μL', 'number'],
+  Gender: ['性别', '男/女', 'category'], Uric_WBC: ['尿白细胞', '/μL', 'number'],
   Age: ['年龄', '岁', 'number'], Uric_specific_gravity: ['尿比重', '', 'number'],
   Uric_conductivity: ['尿电导率', 'mS/cm', 'number'], Uric_RBC: ['尿红细胞', '/μL', 'number'],
   Waist_to_hip_ratio: ['腰臀比', '', 'number'], Uric_PH: ['尿液 pH', '', 'number'],
@@ -35,9 +35,9 @@ const LABELS = {
   Serum_Uric_acid: ['血尿酸', 'μmol/L', 'number'], eGFR: ['eGFR', 'mL/min', 'number'], Fasting_blood_glucose: ['空腹血糖', 'mmol/L', 'number'],
   Triglycerides: ['甘油三酯', 'mmol/L', 'number'], Cholesterol: ['总胆固醇', 'mmol/L', 'number'], HDL: ['高密度脂蛋白', 'mmol/L', 'number'], LDL: ['低密度脂蛋白', 'mmol/L', 'number'],
   Weight: ['体重', 'kg', 'number'], Height: ['身高', 'cm', 'number'], BMI: ['体重指数', 'kg/m²', 'number'], Waistline: ['腰围', 'cm', 'number'], Hips: ['臀围', 'cm', 'number'],
-  ABSI: ['ABSI', '', 'number'], Diastolic_BP: ['舒张压', 'mmHg', 'number'], Smoke: ['吸烟', '', 'category'], Alcohol: ['饮酒', '', 'category'],
-  Hypertension: ['高血压', '', 'category'], Diabete: ['糖尿病', '', 'category'], stone_history: ['结石史', '', 'category'],
-  AgeGroup: ['年龄分组', '', 'category'], BMIGroup: ['BMI 分组', '', 'category'], 'Central obesity': ['中心性肥胖', '', 'category']
+  ABSI: ['ABSI', '', 'number'], Diastolic_BP: ['舒张压', 'mmHg', 'number'],   Smoke: ['吸烟', '否/是', 'category'], Alcohol: ['饮酒', '否/是/曾有', 'category'],
+  Hypertension: ['高血压', '否/是', 'category'], Diabete: ['糖尿病', '否/是', 'category'], stone_history: ['结石史', '否/是', 'category'],
+  AgeGroup: ['年龄分组', '年龄段', 'category'], BMIGroup: ['BMI 分组', '体型分类', 'category'], 'Central obesity': ['中心性肥胖', '否/是', 'category']
 };
 
 const CATEGORY_OPTIONS = {
