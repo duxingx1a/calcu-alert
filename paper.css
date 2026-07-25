@@ -32,13 +32,18 @@ button { cursor: pointer; font: inherit; }
 .brand__name { font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
 .brand__sub { display: block; font-size: 10px; color: #6b7280; letter-spacing: .3px; text-transform: uppercase; margin-top: -1px; }
 .nav-links { display: flex; align-items: center; gap: 20px; }
-.nav-links a { font-size: 13px; color: #4b5563; font-weight: 500; }
-.nav-links a:hover { color: #315c4d; text-decoration: none; }
+.nav-links a {
+  display: inline-flex; align-items: center;
+  font-size: 13px; color: #4b5563; font-weight: 500;
+  padding: 6px 14px; border: 1px solid #d6ded8; border-radius: 6px;
+  text-decoration: none; transition: all .2s;
+}
+.nav-links a:hover { color: #315c4d; border-color: #315c4d; background: #dfeee6; text-decoration: none; }
 .nav-cta {
   background: #1a1a2e; color: #fff !important; padding: 6px 16px; border-radius: 6px;
-  font-size: 13px; font-weight: 600;
+  font-size: 13px; font-weight: 600; border-color: #1a1a2e;
 }
-.nav-cta:hover { background: #315c4d; text-decoration: none !important; }
+.nav-cta:hover { background: #315c4d; border-color: #315c4d; text-decoration: none !important; }
 
 /* --- Eyebrow --- */
 .eyebrow {
@@ -67,7 +72,7 @@ button { cursor: pointer; font: inherit; }
 /* --- Icon Buttons --- */
 .button {
   display: inline-flex; align-items: center; gap: 8px;
-  font-size: 14px; font-weight: 600; padding: 10px 20px;
+  font-size: 14px; font-weight: 600; padding: 9px 18px;
   border: 1px solid transparent; border-radius: 8px;
   text-decoration: none; white-space: nowrap;
   transition: all .2s; box-sizing: border-box; line-height: 1;
