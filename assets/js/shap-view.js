@@ -7,7 +7,9 @@ const SHAP_BLUE_BG  = 'rgba(30,136,229,0.10)';
 /* ---------- utils ---------- */
 function fmt(v, d) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d || 3); }
 function rrect(ctx, x, y, w, h, r) {
-  r = Math.min(r, w / 2, h / 2);
+  if (w <= 0 || h <= 0) return;  // 防御：非正尺寸跳过
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  if (r <= 0) return;
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.lineTo(x + w - r, y);
@@ -69,7 +71,14 @@ function renderPrediction(result) {
   renderProbs(result);
   renderTable(result);
   showResult();
-  requestAnimationFrame(() => { renderForcePlot(result); renderWaterfall(result); });
+
+  // 显示面板后立即强制重排，确保 canvas 父容器有真实尺寸
+  panel().offsetHeight;
+
+  // 先尝试直接渲染；若尺寸仍为 0 则延迟一帧重试
+  try { renderForcePlot(result); } catch (e) { console.error('Force Plot 渲染失败:', e); }
+  try { renderWaterfall(result); } catch (e) { console.error('Waterfall 渲染失败:', e); }
+
   panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -92,14 +101,17 @@ function renderTable(result) {
 /* ========== SHAP Force Plot（单样本标准红蓝推力图） ========== */
 function renderForcePlot(result) {
   const canvas = document.querySelector('#forcePlot');
+  if (!canvas) { console.warn('renderForcePlot: #forcePlot canvas 不存在'); return; }
   const wrap = canvas.closest('.chart-wrap');
-  if (!wrap) return;
+  if (!wrap) { console.warn('renderForcePlot: .chart-wrap 父容器不存在'); return; }
 
   // 用 getBoundingClientRect 强制同步布局（解决 hidden→visible 时 clientWidth=0 的问题）
   const rect = wrap.getBoundingClientRect();
   const w = Math.max(rect.width - 2, 280);
   const h = 130;
   const r = window.devicePixelRatio || 1;
+
+  console.log('Force Plot 画布尺寸:', { rectWidth: rect.width, w, h, r });
 
   canvas.width = w * r;
   canvas.height = h * r;
@@ -110,12 +122,15 @@ function renderForcePlot(result) {
   c.setTransform(r, 0, 0, r, 0, 0);  // 重置 transform 并设备倍率缩放
   const items = [...result.shap.contributions]
     .sort((a, b) => a.shap_value - b.shap_value); // 负→正
-  if (!items.length) return;
+  console.log('Force Plot 数据项:', items.length);
+  if (!items.length) { console.warn('renderForcePlot: 无 SHAP 贡献数据'); return; }
 
   const baseV = result.shap.base_value;
   const cum = [baseV];
   for (let i = 0; i < items.length; i++) cum.push(cum[i] + items[i].shap_value);
-  const xMin = cum[0], xMax = cum[cum.length - 1];
+  // 累计和并非单调：负贡献使 cum 下降，正贡献使其回升
+  // 必须以实际 min/max 为 x 轴范围，否则部分段出现负宽度 → arcTo 负半径报错
+  const xMin = Math.min(...cum), xMax = Math.max(...cum);
   const pad = Math.max((xMax - xMin) * 0.08, 0.02);
   const L = 28, R = w - 28, barT = 44, barH = 36;
   const xf = (v) => L + ((v - xMin + pad) / (xMax - xMin + 2 * pad)) * (R - L);
@@ -166,7 +181,27 @@ function renderForcePlot(result) {
 
 /* ========== SHAP 瀑布图 ========== */
 function renderWaterfall(result) {
-  const { c, w, h } = ctx('waterfallPlot', 720, 400);
+  const canvas = document.querySelector('#waterfallPlot');
+  if (!canvas) { console.warn('renderWaterfall: #waterfallPlot canvas 不存在'); return; }
+  const wrap = canvas.closest('.chart-wrap');
+  if (!wrap) { console.warn('renderWaterfall: .chart-wrap 父容器不存在'); return; }
+
+  // 用 getBoundingClientRect 强制同步布局（解决 hidden→visible 时 clientWidth=0 的问题）
+  const rect = wrap.getBoundingClientRect();
+  const w = Math.max(rect.width - 2, 400);
+  const h = 380;
+  const r = window.devicePixelRatio || 1;
+
+  console.log('Waterfall 画布尺寸:', { rectWidth: rect.width, w, h, r });
+
+  canvas.width = w * r;
+  canvas.height = h * r;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const c = canvas.getContext('2d');
+  c.setTransform(r, 0, 0, r, 0, 0);
+
   const items = [...result.shap.contributions]
     .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
     .slice(0, 14);
