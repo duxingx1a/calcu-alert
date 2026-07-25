@@ -55,8 +55,8 @@ async function initialise() {
       });
     });
     document.querySelector('#calculatorForm').addEventListener('submit', submitForm);
-    document.querySelector('#calculatorForm').addEventListener('input', () => { exampleModified = true; });
-    document.querySelector('#calculatorForm').addEventListener('change', () => { exampleModified = true; });
+    document.querySelector('#calculatorForm').addEventListener('input', () => { exampleModified = true; highlightSample(-1); });
+    document.querySelector('#calculatorForm').addEventListener('change', () => { exampleModified = true; highlightSample(-1); });
     document.querySelector('#resetButton').addEventListener('click', () => { document.querySelector('#calculatorForm').reset(); clearResult(); currentExampleLabel = null; exampleModified = false; });
     document.querySelector('#toggleResult').addEventListener('click', toggleResultPanel);
 
