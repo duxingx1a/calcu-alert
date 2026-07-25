@@ -1,6 +1,6 @@
-import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250731';
-import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250731';
-import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250731';
+import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250732';
+import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250732';
+import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250732';
 
 let metadata;
 let busy = false;

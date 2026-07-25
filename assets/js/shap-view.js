@@ -13,34 +13,35 @@ function ctx(id, cw, ch) {
   return { c: c.getContext('2d'), w, h };
 }
 
-/* ---------- 显隐：面板 + 切换条 同步 ---------- */
+/* ---------- 显隐控制 ---------- */
 const panel  = () => document.querySelector('#resultPanel');
 const bar    = () => document.querySelector('#resultToggleBar');
-const tglBtn = () => document.querySelector('#toggleResult');
+const btn    = () => document.querySelector('#toggleResult');
 
 function showResult() {
+  // 面板显示
   panel().classList.remove('result-hidden');
+  // 切换条始终显示
   bar().classList.remove('result-hidden');
-  tglBtn().textContent = '收起结果';
+  btn().textContent = '收起结果';
 }
 
-function hideResult() {
-  panel().classList.add('result-hidden');
-  bar().classList.add('result-hidden');
-  tglBtn().textContent = '展开结果';
-}
-
+// 仅切换面板，切换条保持可见
 function toggleResultPanel() {
   if (panel().classList.contains('result-hidden')) {
     panel().classList.remove('result-hidden');
-    bar().classList.remove('result-hidden');
-    tglBtn().textContent = '收起结果';
+    btn().textContent = '收起结果';
     panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     panel().classList.add('result-hidden');
-    bar().classList.add('result-hidden');
-    tglBtn().textContent = '展开结果';
+    btn().textContent = '展开结果';
   }
+  // bar 不变，始终可见
+}
+
+function clearResult() {
+  panel().classList.add('result-hidden');
+  bar().classList.add('result-hidden');
 }
 
 /* ---------- 主渲染 ---------- */
@@ -85,7 +86,7 @@ function renderDecision(result) {
   const predV = result.shap.prediction_explained;
   const xMin = Math.min(baseV, predV) - 0.2;
   const xMax = Math.max(baseV, predV) + 0.2;
-  const x = (v) => L + ((v - xMin) / (xMax - xMin)) * (R - L);
+  const xf = (v) => L + ((v - xMin) / (xMax - xMin)) * (R - L);
   const cum = [baseV];
   for (let i = 0; i < items.length; i++) cum.push(cum[i] + items[i].shap_value);
 
@@ -102,7 +103,7 @@ function renderDecision(result) {
     c.fillText((xMin + (xMax - xMin) * i / 5).toFixed(2), L + (R - L) * i / 5, B + 15);
 
   // 基线虚线
-  const bx = x(baseV);
+  const bx = xf(baseV);
   c.strokeStyle = '#b4c4b9'; c.setLineDash([5, 5]); c.lineWidth = 1;
   c.beginPath(); c.moveTo(bx, T - 10); c.lineTo(bx, B + 3); c.stroke();
   c.setLineDash([]);
@@ -110,7 +111,7 @@ function renderDecision(result) {
   // 背景色条 + 特征名
   for (let i = 0; i < items.length; i++) {
     const y = T + i * rh;
-    const x0 = x(cum[i]), x1 = x(cum[i + 1]);
+    const x0 = xf(cum[i]), x1 = xf(cum[i + 1]);
     const rx = Math.min(x0, x1), rw = Math.max(Math.abs(x1 - x0), 2);
     c.fillStyle = items[i].shap_value >= 0 ? 'rgba(232,118,95,0.18)' : 'rgba(82,123,156,0.18)';
     c.fillRect(rx, y + 3, rw, rh - 6);
@@ -126,18 +127,18 @@ function renderDecision(result) {
   c.moveTo(bx, T);
   for (let i = 0; i < items.length; i++) {
     const y = T + i * rh + rh / 2;
-    c.lineTo(x(cum[i]), y);
-    c.lineTo(x(cum[i + 1]), y);
+    c.lineTo(xf(cum[i]), y);
+    c.lineTo(xf(cum[i + 1]), y);
   }
-  c.lineTo(x(predV), B);
+  c.lineTo(xf(predV), B);
   c.stroke();
 
   // 终点圆
   c.fillStyle = '#0d1f19';
-  c.beginPath(); c.arc(x(predV), B, 4.5, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.arc(xf(predV), B, 4.5, 0, Math.PI * 2); c.fill();
 
   c.fillStyle = '#2a5a46'; c.font = 'bold 11px ui-monospace'; c.textAlign = 'left';
-  c.fillText(`输出 ${fmt(predV)}`, x(predV) + 10, B + 3);
+  c.fillText(`输出 ${fmt(predV)}`, xf(predV) + 10, B + 3);
   c.fillStyle = '#778f81'; c.font = '10px ui-monospace'; c.textAlign = 'right';
   c.fillText(`基线 ${fmt(baseV)}`, bx - 8, B + 3);
 }
@@ -173,13 +174,6 @@ function renderWaterfall(result) {
     if (pos) { c.textAlign = 'left'; c.fillText(`+${fmt(it.shap_value, 4)}`, midX + barW + 5, y + rh * 0.62); }
     else     { c.textAlign = 'right'; c.fillText(fmt(it.shap_value, 4), midX - barW - 5, y + rh * 0.62); }
   });
-}
-
-/* ---------- 导出 ---------- */
-function clearResult() {
-  panel().classList.add('result-hidden');
-  bar().classList.add('result-hidden');
-  tglBtn().textContent = '展开结果';
 }
 
 export { clearResult, renderPrediction, toggleResultPanel };
