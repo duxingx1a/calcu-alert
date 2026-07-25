@@ -1,6 +1,6 @@
-import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250725';
-import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250726';
-import { clearResult, renderPrediction } from './shap-view.js?v=250725';
+import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250727';
+import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250727';
+import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250727';
 
 let metadata;
 let busy = false;
@@ -39,7 +39,7 @@ async function initialise() {
     document.querySelectorAll('[data-sample]').forEach((button) => button.addEventListener('click', () => fillValues(metadata, examples[Number(button.dataset.sample)].values)));
     document.querySelector('#calculatorForm').addEventListener('submit', submitForm);
     document.querySelector('#resetButton').addEventListener('click', () => { document.querySelector('#calculatorForm').reset(); clearResult(); });
-    document.querySelector('#closeResult').addEventListener('click', clearResult);
+    document.querySelector('#toggleResult').addEventListener('click', toggleResultPanel);
   } catch (error) {
     setStatus(false, `计算引擎未就绪：${error.message}`);
   }

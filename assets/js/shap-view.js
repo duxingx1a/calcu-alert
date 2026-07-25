@@ -18,6 +18,7 @@ function renderPrediction(result) {
   renderDecisionPlot(result);
   renderWaterfall(result);
   document.querySelector('#resultPanel').hidden = false;
+  document.querySelector('#toggleResult').textContent = '收起结果';
   document.querySelector('#resultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -85,6 +86,15 @@ function renderWaterfall(result) {
 
 function clearResult() {
   document.querySelector('#resultPanel').hidden = true;
+  document.querySelector('#toggleResult').textContent = '展开结果';
 }
 
-export { clearResult, renderPrediction };
+function toggleResultPanel() {
+  const panel = document.querySelector('#resultPanel');
+  const hidden = !panel.hidden;
+  panel.hidden = hidden;
+  document.querySelector('#toggleResult').textContent = hidden ? '展开结果' : '收起结果';
+  if (!hidden) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+export { clearResult, renderPrediction, toggleResultPanel };

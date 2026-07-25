@@ -21,8 +21,8 @@
     <section class="quickbar"><div><span class="quickbar-label">示例病例</span><div id="samples" class="samples" aria-label="示例输入"></div></div><div class="quick-actions"><button id="calculateButton" class="primary" type="submit" form="calculatorForm">计算风险并解释</button><button id="resetButton" class="secondary" type="button">清空</button></div></section>
 
     <form id="calculatorForm" novalidate>
-      <section class="panel"><div class="panel-header"><h2>一、必填特征</h2></div><div id="requiredFields" class="field-grid"></div></section>
-      <section class="panel"><div class="panel-header"><h2>二、临床特征</h2></div><div id="optionalFields"></div></section>
+      <section class="panel"><div class="panel-header"><h2>主要特征（必填）</h2></div><div id="requiredFields" class="field-grid"></div></section>
+      <section class="panel"><div class="panel-header"><h2>临床特征（选填）</h2></div><div id="optionalFields"></div></section>
       <p class="disclaimer">本工具用于科研演示和模型复现，不构成诊断、治疗建议或临床决策依据。请勿输入可识别患者身份的信息。</p>
     </form>
 
@@ -33,9 +33,9 @@
       <article class="subpanel"><h3>SHAP 决策图</h3><div class="chart-wrap"><canvas id="decisionPlot" class="chart" aria-label="SHAP决策图"></canvas></div></article>
       <article class="subpanel"><h3>SHAP 瀑布图 · 绝对贡献前 20 项</h3><div class="chart-wrap"><canvas id="waterfallPlot" class="chart" aria-label="SHAP瀑布图"></canvas></div></article>
       <article class="subpanel"><h3>完整贡献数据</h3><div class="table-wrap"><table class="shap-table"><thead><tr><th>秩</th><th>输入项</th><th>类型</th><th>模型使用值</th><th>SHAP</th></tr></thead><tbody id="shapTableBody"></tbody></table></div></article>
-      <div class="actions"><button id="closeResult" class="secondary" type="button">收起结果</button></div>
+      <div class="actions"><button id="toggleResult" class="secondary" type="button">收起结果</button></div>
     </section>
   </main>
-  <script type="module" src="assets/js/demo-app.js?v=250726"></script>
+  <script type="module" src="assets/js/demo-app.js?v=250727"></script>
 </body>
 </html>
