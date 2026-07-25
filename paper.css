@@ -135,6 +135,7 @@ button { cursor: pointer; font: inherit; }
   cursor: zoom-in;
 }
 .figure-card__image { width: 100%; height: auto; }
+.figure-card__image--shrink { max-width: 720px; width: 100%; display: block; margin: 0 auto; }
 .figure-card__caption { padding: 8px 16px 14px; font-size: 12px; color: #6b7280; line-height: 1.6; }
 
 .figure-card--featured .figure-card__image { width: 100%; }

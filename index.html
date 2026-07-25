@@ -87,22 +87,15 @@
       </div>
       <div class="figure-grid figure-grid--shap">
         <article class="figure-card figure-card--featured shap-card--main">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 03 · Global explanation</div><h3>全局特征贡献：风险不是黑箱</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig3a_shap_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献" aria-label="放大查看">放大 ↗</button></div>
-          <button class="figure-card__media" type="button" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献"><img class="figure-card__image" src="png/fig4a_shap_stacking_beeswarm.png" alt="堆叠集成模型 SHAP 蜂群图" loading="lazy"></button>
-          <p class="figure-card__caption">SHAP 蜂群图展示每个特征对个体预测的方向与幅度，颜色编码原始特征值。点击图片查看高清版本。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 03 · Global explanation</div><h3>全局特征贡献：风险不是黑箱</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献"><img class="figure-card__image figure-card__image--shrink" src="png/fig4a_shap_stacking_beeswarm.png" alt="堆叠集成模型 SHAP 蜂群图" loading="lazy"></div>
+          <p class="figure-card__caption">点击图片可放大查看。SHAP 蜂群图展示每个特征对个体预测的方向与幅度，颜色编码原始特征值。</p>
         </article>
-        <div class="figure-grid">
-          <article class="figure-card shap-card--ranking">
-            <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 04 · Base model</div><h3>基础 XGBoost 特征贡献</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig4b_shap_stacking_bar.png" data-caption="SHAP 全局特征重要性排序">放大 ↗</button></div>
-            <button class="figure-card__media" type="button" data-lightbox="png/fig4a_shap_base_xgb_beeswarm.png" data-caption="SHAP 蜂群图：基础 XGBoost 模型特征贡献"><img class="figure-card__image" src="png/fig4a_shap_base_xgb_beeswarm.png" alt="基础 XGBoost 模型 SHAP 蜂群图" loading="lazy"></button>
-            <p class="figure-card__caption">作为堆叠模型的基线参照，基础 XGBoost 的特征贡献分布用于比较集成后的解释结果。</p>
-          </article>
-          <article class="figure-card shap-card--dependence">
-            <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 05 · Non-linearity</div><h3>关键变量的非线性效应</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应" aria-label="放大查看">放大 ↗</button></div>
-            <button class="figure-card__media" type="button" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP 特征依赖图" loading="lazy"></button>
-            <p class="figure-card__caption">依赖图进一步观察单个体检指标与预测风险之间的变化关系，揭示非线性模式。</p>
-          </article>
-        </div>
+        <article class="figure-card figure-card--featured shap-card--dependence">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 04 · Non-linearity</div><h3>关键变量的非线性效应</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP 特征依赖图" loading="lazy"></div>
+          <p class="figure-card__caption">点击图片可放大查看。依赖图进一步观察单个体检指标与预测风险之间的变化关系，揭示非线性模式。</p>
+        </article>
       </div>
     </div>
   </section>
@@ -117,19 +110,19 @@
       </div>
       <div class="figure-grid figure-grid--wide">
         <article class="figure-card">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 12</div><h3>外部验证 ROC</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig_ext_validation_roc.png" data-caption="外部验证 ROC 曲线" aria-label="放大查看">放大 ↗</button></div>
-          <button class="figure-card__media" type="button" data-lightbox="png/fig_ext_validation_roc.png" data-caption="外部验证 ROC 曲线"><img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="外部验证 ROC 曲线" loading="lazy"></button>
-          <p class="figure-card__caption">外部验证集上 Stacking XGBoost 的 ROC 曲线，AUROC 0.7123，验证模型泛化能力。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 12</div><h3>外部验证 ROC</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/fig_ext_validation_roc.png" data-caption="外部验证 ROC 曲线"><img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="外部验证 ROC 曲线" loading="lazy"></div>
+          <p class="figure-card__caption">点击图片可放大查看。外部验证集上 Stacking XGBoost 的 ROC 曲线，AUROC 0.7123。</p>
         </article>
         <article class="figure-card">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S1</div><h3>特征相关性热力图</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="特征相关性热力图" aria-label="放大查看">放大 ↗</button></div>
-          <button class="figure-card__media" type="button" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="特征相关性热力图"><img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="特征相关性热力图" loading="lazy"></button>
-          <p class="figure-card__caption">77 项输入特征之间的相关性热力图，展示特征间的线性关系。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S1</div><h3>特征相关性热力图</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="特征相关性热力图"><img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="特征相关性热力图" loading="lazy"></div>
+          <p class="figure-card__caption">点击图片可放大查看。77 项输入特征之间的相关性热力图。</p>
         </article>
         <article class="figure-card">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S3</div><h3>概率密度分布</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/figS3_probability_density.png" data-caption="概率密度分布" aria-label="放大查看">放大 ↗</button></div>
-          <button class="figure-card__media" type="button" data-lightbox="png/figS3_probability_density.png" data-caption="概率密度分布"><img class="figure-card__image" src="png/figS3_probability_density.png" alt="概率密度分布" loading="lazy"></button>
-          <p class="figure-card__caption">阳性与阴性样本的模型输出概率密度分布对比。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S3</div><h3>概率密度分布</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/figS3_probability_density.png" data-caption="概率密度分布"><img class="figure-card__image" src="png/figS3_probability_density.png" alt="概率密度分布" loading="lazy"></div>
+          <p class="figure-card__caption">点击图片可放大查看。阳性与阴性样本的模型输出概率密度分布对比。</p>
         </article>
       </div>
     </div>
