@@ -15,9 +15,22 @@ function panel() { return document.querySelector('#resultPanel'); }
 function toggleBar() { return document.querySelector('#resultToggleBar'); }
 
 export function toggleResultPanel(show) {
+  const p = panel();
+  const t = toggleBar();
+  const btn = document.querySelector('#toggleResult');
+
+  if (typeof show !== 'boolean') {
+    // 切换模式：根据当前状态反转
+    show = p.style.display === 'none';
+  }
+
   const s = show ? '' : 'none';
-  panel().style.display = s;
-  toggleBar().style.display = s;
+  p.style.display = s;
+  t.style.display = s;
+
+  if (btn) {
+    btn.textContent = show ? '收起结果' : '展开结果';
+  }
 }
 
 /* ---------- 核心：渲染预测结果 ---------- */
