@@ -56,11 +56,12 @@ button { cursor: pointer; font: inherit; }
 
 /* --- Hero --- */
 .hero { padding: 80px 0 48px; }
-.hero__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 48px; align-items: start; }
-.hero__title-row { grid-column: 1 / -1; }
-.hero__title { font-size: 44px; font-weight: 800; line-height: 1.15; letter-spacing: -1px; margin-bottom: 0; }
+.hero__grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "title title" "explain visual"; gap: 36px 48px; align-items: start; }
+.hero__title-row { grid-area: title; padding-bottom: 24px; border-bottom: 1px solid #d6ded8; }
+.hero__title { font-size: 42px; font-weight: 800; line-height: 1.2; letter-spacing: -1px; margin-bottom: 0; color: #142221; }
 .hero__title em { color: #315c4d; font-style: normal; }
-.hero__explain { display: flex; flex-direction: column; justify-content: center; }
+.hero__explain { grid-area: explain; display: flex; flex-direction: column; justify-content: center; }
+.hero-visual { grid-area: visual; }
 .hero__lede { font-size: 16px; color: #4b5563; line-height: 1.7; margin-bottom: 24px; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
 .hero__note { font-size: 12px; color: #9ca3af; display: flex; align-items: center; gap: 6px; }
@@ -169,8 +170,8 @@ button { cursor: pointer; font: inherit; }
 
 /* --- Responsive --- */
 @media (max-width: 900px) {
-  .hero__grid { grid-template-columns: 1fr; }
-  .hero__title-row { grid-column: 1; }
+  .hero__grid { grid-template-columns: 1fr; grid-template-areas: "title" "visual" "explain"; }
+  .hero__title-row { padding-bottom: 20px; }
   .hero__title { font-size: 32px; }
   .metrics { grid-template-columns: repeat(2,1fr); }
   .figure-grid { grid-template-columns: 1fr; }
