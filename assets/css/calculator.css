@@ -35,7 +35,7 @@ h1 { margin:6px 0 4px; font:600 clamp(2rem,4vw,3.6rem)/1.05 var(--serif); letter
 .prob-val { font:600 11px var(--mono); color:var(--ink); text-align:left; }
 /* 图表 */
 .chart-wrap { overflow:auto; border:1px solid var(--line); background:#fbfcfd; -webkit-overflow-scrolling:touch; }.chart { display:block; width:100%; min-height:400px; min-width:700px; }
-.chart#decisionPlot { min-height:500px; }
+.chart#forcePlot { min-height:130px; }
 .chart#waterfallPlot { min-height:380px; }
 .caption { color:var(--muted); font-size:12px; margin:7px 0; }.table-wrap { overflow:auto; max-height:480px; border:1px solid var(--line); }.shap-table { width:100%; border-collapse:collapse; font-size:12px; }.shap-table th,.shap-table td { padding:8px 9px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap; }.shap-table th { position:sticky; top:0; background:var(--wash); color:var(--muted); }.contribution-positive { color:#FF0D57; }.contribution-negative { color:#1E88E5; }.error-box { color:var(--red); background:var(--red-soft); padding:16px; }
 @media (max-width:1000px) { .field-grid,.optional-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }

@@ -6,6 +6,20 @@ const SHAP_BLUE_BG  = 'rgba(30,136,229,0.10)';
 
 /* ---------- utils ---------- */
 function fmt(v, d) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d || 3); }
+function rrect(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
 
 /* ---------- canvas ---------- */
 function ctx(id, cw, ch) {
@@ -92,16 +106,17 @@ function renderForcePlot(result) {
 
   c.clearRect(0, 0, w, h);
 
-  // 细灰底条
-  c.fillStyle = '#eef1f0'; c.beginPath();
-  c.roundRect(L, barT, R - L, barH, 3); c.fill();
+  // 细灰底条（手动圆角，兼容旧浏览器）
+  rrect(c, L, barT, R - L, barH, 3);
+  c.fillStyle = '#eef1f0'; c.fill();
 
   // 红/蓝特征段
   for (let i = 0; i < items.length; i++) {
     const x0 = xf(cum[i]), x1 = xf(cum[i + 1]);
     if (Math.abs(x1 - x0) < 0.5) continue;
+    rrect(c, x0, barT, x1 - x0, barH, 2);
     c.fillStyle = items[i].shap_value >= 0 ? SHAP_RED : SHAP_BLUE;
-    c.beginPath(); c.roundRect(x0, barT, x1 - x0, barH, 2); c.fill();
+    c.fill();
 
     // 段内标签（如果能放下）
     const segW = Math.abs(x1 - x0);
