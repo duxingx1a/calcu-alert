@@ -1,5 +1,5 @@
 import { getExamples, getHealth, getMetadata, predict } from './api-client.js';
-import { fillValues, readValues, renderForm, validate } from './feature-schema.js';
+import { fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js';
 import { clearResult, renderPrediction } from './shap-view.js';
 
 let metadata;
@@ -15,17 +15,27 @@ function setBusy(value) {
   busy = value;
   const button = document.querySelector('#calculateButton');
   button.disabled = value;
-  button.textContent = value ? '正在执行真实推理…' : '计算风险并解释';
+  button.textContent = value ? '正在计算…' : '计算风险并解释';
 }
 
 async function initialise() {
   try {
     metadata = await getMetadata();
     renderForm(metadata);
-    document.querySelector('#featureCount').textContent = `${metadata.features.length} 个临床特征 → 10 个基模型概率 + 77 个直接项 = 87 维`;
-    setStatus(true, `计算引擎已就绪 · ${metadata.model_id} · ${metadata.features.length} 项输入`);
-    const examples = (await getExamples()).examples;
-    document.querySelector('#samples').innerHTML = examples.map((item, index) => `<button type="button" class="sample-card" data-sample="${index}" title="填充真实外部验证病例"><strong>${item.name}</strong></button>`).join('');
+    document.querySelector('#featureCount').textContent = `${metadata.features.length} 个临床特征`;
+    setStatus(true, `计算引擎已就绪 · ${metadata.features.length} 项输入`);
+
+    let examples = SAMPLES;
+    try {
+      const remote = await getExamples();
+      if (remote && remote.examples && remote.examples.length) {
+        examples = remote.examples;
+      }
+    } catch (e) {
+      console.warn('远程示例不可用，使用本地预置示例');
+    }
+
+    document.querySelector('#samples').innerHTML = examples.map((item, index) => `<button type="button" class="sample-card" data-sample="${index}" title="填充示例病例">${item.name || ('示例' + (index + 1))}</button>`).join('');
     document.querySelectorAll('[data-sample]').forEach((button) => button.addEventListener('click', () => fillValues(metadata, examples[Number(button.dataset.sample)].values)));
     document.querySelector('#calculatorForm').addEventListener('submit', submitForm);
     document.querySelector('#resetButton').addEventListener('click', () => { document.querySelector('#calculatorForm').reset(); clearResult(); });

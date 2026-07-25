@@ -9,7 +9,7 @@ const GROUPS = {
 };
 
 const LABELS = {
-  Gender: ['性别', '0=女，1=男', 'category'], Uric_WBC: ['尿白细胞', '/μL', 'number'],
+  Gender: ['性别', '', 'category'], Uric_WBC: ['尿白细胞', '/μL', 'number'],
   Age: ['年龄', '岁', 'number'], Uric_specific_gravity: ['尿比重', '', 'number'],
   Uric_conductivity: ['尿电导率', 'mS/cm', 'number'], Uric_RBC: ['尿红细胞', '/μL', 'number'],
   Waist_to_hip_ratio: ['腰臀比', '', 'number'], Uric_PH: ['尿液 pH', '', 'number'],
@@ -35,9 +35,9 @@ const LABELS = {
   Serum_Uric_acid: ['血尿酸', 'μmol/L', 'number'], eGFR: ['eGFR', 'mL/min', 'number'], Fasting_blood_glucose: ['空腹血糖', 'mmol/L', 'number'],
   Triglycerides: ['甘油三酯', 'mmol/L', 'number'], Cholesterol: ['总胆固醇', 'mmol/L', 'number'], HDL: ['高密度脂蛋白', 'mmol/L', 'number'], LDL: ['低密度脂蛋白', 'mmol/L', 'number'],
   Weight: ['体重', 'kg', 'number'], Height: ['身高', 'cm', 'number'], BMI: ['体重指数', 'kg/m²', 'number'], Waistline: ['腰围', 'cm', 'number'], Hips: ['臀围', 'cm', 'number'],
-  ABSI: ['ABSI', '', 'number'], Diastolic_BP: ['舒张压', 'mmHg', 'number'], Smoke: ['吸烟', '0=否，1=是', 'category'], Alcohol: ['饮酒', '0=否，1=是，2=曾', 'category'],
-  Hypertension: ['高血压', '0=否，1=是', 'category'], Diabete: ['糖尿病', '0=否，1=是', 'category'], stone_history: ['结石史', '0=否，1=是', 'category'],
-  AgeGroup: ['年龄分组', '0–5', 'category'], BMIGroup: ['BMI 分组', '0–3', 'category'], 'Central obesity': ['中心性肥胖', '0=否，1=是', 'category']
+  ABSI: ['ABSI', '', 'number'], Diastolic_BP: ['舒张压', 'mmHg', 'number'], Smoke: ['吸烟', '', 'category'], Alcohol: ['饮酒', '', 'category'],
+  Hypertension: ['高血压', '', 'category'], Diabete: ['糖尿病', '', 'category'], stone_history: ['结石史', '', 'category'],
+  AgeGroup: ['年龄分组', '', 'category'], BMIGroup: ['BMI 分组', '', 'category'], 'Central obesity': ['中心性肥胖', '', 'category']
 };
 
 const CATEGORY_OPTIONS = {
@@ -48,8 +48,8 @@ const CATEGORY_OPTIONS = {
 };
 
 const SAMPLES = [
-  { name: '示例病例 A', note: '仅填充输入，不自动计算', values: { Gender: 0, Uric_WBC: 0, Age: 31, Uric_specific_gravity: 1.013, Uric_conductivity: 14.2, Uric_RBC: 0, Waist_to_hip_ratio: 0.92, Uric_PH: 6.5, BRI: 4.36, Systolic_BP: 118 } },
-  { name: '示例病例 B', note: '仅填充输入，不自动计算', values: { Gender: 1, Uric_WBC: 1, Age: 54, Uric_specific_gravity: 1.01, Uric_conductivity: 25, Uric_RBC: 0, Waist_to_hip_ratio: 0.96, Uric_PH: 7.5, BRI: 4.8, Systolic_BP: 164 } }
+  { name: '示例病例 A', values: { Gender: 0, Uric_WBC: 0, Age: 31, Uric_specific_gravity: 1.013, Uric_conductivity: 14.2, Uric_RBC: 0, Waist_to_hip_ratio: 0.92, Uric_PH: 6.5, BRI: 4.36, Systolic_BP: 118 } },
+  { name: '示例病例 B', values: { Gender: 1, Uric_WBC: 1, Age: 54, Uric_specific_gravity: 1.01, Uric_conductivity: 25, Uric_RBC: 0, Waist_to_hip_ratio: 0.96, Uric_PH: 7.5, BRI: 4.8, Systolic_BP: 164 } }
 ];
 
 function featureLabel(key) {
@@ -70,11 +70,10 @@ function renderField(definition, index) {
   const required = TOP_10.includes(key);
   const options = CATEGORY_OPTIONS[key];
   const fallback = required ? '' : defaultValue(definition);
-  const helper = required ? '来自基础 XGBoost SHAP 前10，请填写' : '已预填训练集统计量，可修改';
   const control = options
-    ? `<select id="feature-${index}" data-key="${key}" data-default="${typeof definition.default === 'object' ? 'gender' : ''}" data-autofill="${required ? 'false' : 'true'}" aria-label="${detail[0]}"><option value="">请选择</option>${options.map(([value, label]) => `<option value="${value}" ${String(fallback) === value ? 'selected' : ''}>${label}（${value}）</option>`).join('')}</select>`
+    ? `<select id="feature-${index}" data-key="${key}" data-default="${typeof definition.default === 'object' ? 'gender' : ''}" data-autofill="${required ? 'false' : 'true'}" aria-label="${detail[0]}"><option value="">请选择</option>${options.map(([value, label]) => `<option value="${value}" ${String(fallback) === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`
     : `<input id="feature-${index}" data-key="${key}" data-default="${typeof definition.default === 'object' ? 'gender' : ''}" data-autofill="${required ? 'false' : 'true'}" value="${fallback}" type="number" step="any" inputmode="decimal" aria-label="${detail[0]}" />`;
-  return `<div class="field ${required ? 'field-required' : ''}"><label for="feature-${index}">${detail[0]} ${required ? '<b>必填</b>' : '<span>默认</span>'}<small>${detail[1]}</small></label>${control}<p class="field-helper">${helper}</p><p class="field-error" id="error-${index}"></p></div>`;
+  return `<div class="field ${required ? 'field-required' : ''}"><label for="feature-${index}">${detail[0]} ${required ? '<b>必填</b>' : '<span>选填</span>'}<small>${detail[1]}</small></label>${control}<p class="field-error" id="error-${index}"></p></div>`;
 }
 
 function renderForm(metadata) {
@@ -144,7 +143,7 @@ function validate(values, metadata) {
   missing.forEach((key) => {
     const definition = metadata.features.find((item) => item.key === key);
     const index = metadata.features.indexOf(definition);
-    document.querySelector(`#error-${index}`).textContent = '该字段为 SHAP 前10必填特征';
+    document.querySelector(`#error-${index}`).textContent = '该字段为必填特征';
     document.querySelector(`#feature-${index}`).closest('.field').classList.add('invalid');
   });
   return missing;
