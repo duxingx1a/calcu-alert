@@ -26,6 +26,7 @@
           pinchToClose: false,
           closeOnVerticalDrag: true,
           maxZoomLevel: 6,
+          wheelToZoom: true,
         });
 
         // 标题更新
