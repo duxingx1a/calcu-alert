@@ -175,17 +175,26 @@ button { cursor: pointer; font: inherit; }
 }
 .lightbox__panel {
   position: relative; max-width: 90vw; max-height: 90vh;
-  background: #fff; border-radius: 12px; overflow: hidden;
+  background: #fff; border-radius: 12px; overflow: auto;
   box-shadow: 0 8px 40px rgba(0,0,0,.3);
+  scroll-behavior: auto;
 }
 .lightbox__close {
-  position: absolute; top: 8px; right: 8px; z-index: 10;
-  background: rgba(0,0,0,.5); color: #fff; border: none;
-  border-radius: 6px; padding: 4px 12px; font-size: 13px;
+  position: fixed; top: 16px; right: 16px; z-index: 10;
+  background: rgba(0,0,0,.55); color: #fff; border: none;
+  border-radius: 6px; padding: 6px 14px; font-size: 14px;
 }
-.lightbox__close:hover { background: rgba(0,0,0,.7); }
-.lightbox__panel img { max-width: 100%; max-height: 80vh; display: block; margin: 0 auto; cursor: zoom-in; }
-.lightbox__panel p { padding: 10px 16px; font-size: 13px; color: #4b5563; }
+.lightbox__close:hover { background: rgba(0,0,0,.75); }
+.lightbox__panel img {
+  display: block; margin: 0 auto;
+  max-width: 100%; max-height: 80vh;
+  cursor: zoom-in; user-select: none;
+  -webkit-user-drag: none;
+}
+.lightbox__panel img.is-zoomed {
+  max-width: none; max-height: none;
+  cursor: grab;
+}
 
 /* --- Footer --- */
 .footer { border-top: 1px solid #d6ded8; padding: 24px 0; margin-top: 32px; }
