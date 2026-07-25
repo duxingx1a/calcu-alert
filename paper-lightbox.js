@@ -7,24 +7,22 @@
     var caption = document.getElementById('lightboxCaption');
     if (!lightbox || !image || !caption) return;
 
-    var panel = lightbox.querySelector('.lightbox__panel');
     var closeButton = lightbox.querySelector('.lightbox__close');
     var lastTrigger = null;
     var zoom = 1;
     var naturalW = 0;
     var naturalH = 0;
 
-    /* ---------- state helpers ---------- */
     function isZoomed() { return zoom > 1; }
 
     function applyZoom() {
       if (isZoomed()) {
         image.classList.add('is-zoomed');
-        image.style.width = Math.round(naturalW * zoom) + 'px';
+        image.style.width  = Math.round(naturalW * zoom) + 'px';
         image.style.height = 'auto';
       } else {
         image.classList.remove('is-zoomed');
-        image.style.width = '';
+        image.style.width  = '';
         image.style.height = '';
       }
       image.style.cursor = isZoomed() ? 'grab' : 'zoom-in';
@@ -33,37 +31,36 @@
     function resetZoom() {
       zoom = 1;
       applyZoom();
+      lightbox.scrollLeft = 0;
+      lightbox.scrollTop  = 0;
     }
 
     function zoomAt(clientX, clientY, delta) {
       if (!naturalW || !naturalH) return;
-      var rect = panel.getBoundingClientRect();
-
-      // image position relative to panel content origin
-      var imgRect = image.getBoundingClientRect();
-      var imgLeft = imgRect.left - rect.left + panel.scrollLeft;
-      var imgTop  = imgRect.top  - rect.top  + panel.scrollTop;
-
-      var relX = clientX - imgLeft;   // cursor x inside image
-      var relY = clientY - imgTop;    // cursor y inside image
 
       var oldZoom = zoom;
-      zoom = Math.min(5, Math.max(1, zoom + delta));
+      zoom = Math.min(6, Math.max(1, zoom + delta));
       if (zoom < 1.001) zoom = 1;
+
+      if (oldZoom === zoom) return;
+
+      // cursor position in document
+      var docX = clientX + lightbox.scrollLeft;
+      var docY = clientY + lightbox.scrollTop;
 
       applyZoom();
 
-      // keep the point under cursor stationary
-      var scale = zoom / oldZoom;
-      if (oldZoom > 1 && zoom > 1) {
-        panel.scrollLeft = imgLeft + relX * scale - (clientX - rect.left);
-        panel.scrollTop  = imgTop  + relY * scale - (clientY - rect.top);
-      } else if (zoom > 1) {
-        // entering zoom from 1
-        var imgW = Math.round(naturalW * zoom);
-        var imgH = Math.round(naturalH * zoom);
-        panel.scrollLeft = (imgW / rect.width)  * relX - (clientX - rect.left);
-        panel.scrollTop  = (imgH / rect.height) * relY - (clientY - rect.top);
+      if (zoom > 1) {
+        // keep the document point under cursor
+        var scale = zoom / oldZoom;
+        if (oldZoom > 1) {
+          lightbox.scrollLeft = docX * scale - clientX;
+          lightbox.scrollTop  = docY * scale - clientY;
+        } else {
+          // entering zoom from 1-fit → fit image center to cursor
+          lightbox.scrollLeft = docX * scale - clientX;
+          lightbox.scrollTop  = docY * scale - clientY;
+        }
       }
     }
 
@@ -74,25 +71,16 @@
       image.alt = trigger.dataset.caption || '';
       caption.textContent = trigger.dataset.caption || '';
 
-      // wait for image to load so we have natural dimensions
-      image.onload = function () {
+      function onReady() {
         naturalW = image.naturalWidth;
         naturalH = image.naturalHeight;
         resetZoom();
-        panel.scrollLeft = 0;
-        panel.scrollTop = 0;
-      };
-      // in case image is cached and onload already fired
-      if (image.complete && image.naturalWidth) {
-        naturalW = image.naturalWidth;
-        naturalH = image.naturalHeight;
-        resetZoom();
-        panel.scrollLeft = 0;
-        panel.scrollTop = 0;
       }
+      image.onload = onReady;
+      if (image.complete && image.naturalWidth) onReady();
 
       lightbox.hidden = false;
-      document.body.classList.add('lightbox-open');
+      document.body.style.overflow = 'hidden';
       closeButton.focus();
     }
 
@@ -100,9 +88,7 @@
       lightbox.hidden = true;
       image.src = '';
       resetZoom();
-      panel.scrollLeft = 0;
-      panel.scrollTop = 0;
-      document.body.classList.remove('lightbox-open');
+      document.body.style.overflow = '';
       if (lastTrigger) lastTrigger.focus();
     }
 
@@ -114,20 +100,20 @@
       });
     });
 
-    /* ---------- close via backdrop / Esc ---------- */
+    /* ---------- close via backdrop / button / Esc ---------- */
     lightbox.addEventListener('click', function (event) {
       if (event.target.hasAttribute('data-lightbox-close')) closeLightbox();
     });
-
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
     });
 
     /* ---------- wheel zoom ---------- */
-    panel.addEventListener('wheel', function (event) {
+    lightbox.addEventListener('wheel', function (event) {
       if (lightbox.hidden) return;
+      if (event.ctrlKey || event.metaKey) return; // allow browser pinch-zoom
       event.preventDefault();
-      var delta = event.deltaY < 0 ? 0.25 : -0.25;
+      var delta = event.deltaY < 0 ? 0.3 : -0.3;
       zoomAt(event.clientX, event.clientY, delta);
     }, { passive: false });
 
@@ -137,20 +123,20 @@
       if (isZoomed()) {
         resetZoom();
       } else {
-        zoom = 2;
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        var fitZoom = Math.min(vw / naturalW, vh / naturalH, 1);
+        zoom = Math.max(1.5, fitZoom * 2.5);
+        if (zoom < 1.01) zoom = 2;
         applyZoom();
-        // scroll to center the clicked point
         if (zoom > 1) {
-          var rect = panel.getBoundingClientRect();
-          var imgW = Math.round(naturalW * zoom);
-          var imgH = Math.round(naturalH * zoom);
-          panel.scrollLeft = (imgW / rect.width)  * (event.clientX - rect.left) - rect.width  / 2;
-          panel.scrollTop  = (imgH / rect.height) * (event.clientY - rect.top)  - rect.height / 2;
+          lightbox.scrollLeft = (Math.round(naturalW * zoom) - vw) / 2;
+          lightbox.scrollTop  = (Math.round(naturalH * zoom) - vh) / 2;
         }
       }
     });
 
-    /* ---------- drag-to-pan (only when zoomed) ---------- */
+    /* ---------- drag-to-pan ---------- */
     var dragging = false;
     var startX = 0, startY = 0, startScrollX = 0, startScrollY = 0;
 
@@ -160,8 +146,8 @@
       dragging = true;
       startX = event.clientX;
       startY = event.clientY;
-      startScrollX = panel.scrollLeft;
-      startScrollY = panel.scrollTop;
+      startScrollX = lightbox.scrollLeft;
+      startScrollY = lightbox.scrollTop;
       image.setPointerCapture(event.pointerId);
       image.style.cursor = 'grabbing';
     });
@@ -169,8 +155,8 @@
     image.addEventListener('pointermove', function (event) {
       if (!dragging) return;
       event.preventDefault();
-      panel.scrollLeft = startScrollX + (startX - event.clientX);
-      panel.scrollTop  = startScrollY  + (startY - event.clientY);
+      lightbox.scrollLeft = startScrollX + (startX - event.clientX);
+      lightbox.scrollTop  = startScrollY  + (startY - event.clientY);
     });
 
     var endDrag = function (event) {
