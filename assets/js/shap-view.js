@@ -1,43 +1,45 @@
 /* ---------- utils ---------- */
-function fmt(v, d = 3) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d); }
+function fmt(v, d) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d || 3); }
 
 /* ---------- canvas ---------- */
-function canvasCtx(id, w, h) {
+function ctx(id, cw, ch) {
   const c = document.querySelector(`#${id}`);
   const r = window.devicePixelRatio || 1;
-  const cw = c.clientWidth || w || 700;
-  const ch = c.clientHeight || h || 400;
-  c.width = cw * r; c.height = ch * r;
-  c.style.width = cw + 'px'; c.style.height = ch + 'px';
-  const ctx = c.getContext('2d');
-  ctx.scale(r, r);
-  return { ctx, w: cw, h: ch };
+  const w = c.clientWidth || cw || 700;
+  const h = c.clientHeight || ch || 400;
+  c.width = w * r; c.height = h * r;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  c.getContext('2d').scale(r, r);
+  return { c: c.getContext('2d'), w, h };
 }
 
-/* ---------- 显隐控制（纯 classList，不碰 hidden 属性） ---------- */
-const panel = () => document.querySelector('#resultPanel');
-const toggleBtn = () => document.querySelector('#toggleResult');
+/* ---------- 显隐：面板 + 切换条 同步 ---------- */
+const panel  = () => document.querySelector('#resultPanel');
+const bar    = () => document.querySelector('#resultToggleBar');
+const tglBtn = () => document.querySelector('#toggleResult');
 
 function showResult() {
-  panel().classList.remove('hidden-panel');
-  toggleBtn().textContent = '收起结果';
+  panel().classList.remove('result-hidden');
+  bar().classList.remove('result-hidden');
+  tglBtn().textContent = '收起结果';
 }
 
 function hideResult() {
-  panel().classList.add('hidden-panel');
-  toggleBtn().textContent = '展开结果';
+  panel().classList.add('result-hidden');
+  bar().classList.add('result-hidden');
+  tglBtn().textContent = '展开结果';
 }
 
 function toggleResultPanel() {
-  const p = panel();
-  const hidden = p.classList.contains('hidden-panel');
-  if (hidden) {
-    p.classList.remove('hidden-panel');
-    toggleBtn().textContent = '收起结果';
-    p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (panel().classList.contains('result-hidden')) {
+    panel().classList.remove('result-hidden');
+    bar().classList.remove('result-hidden');
+    tglBtn().textContent = '收起结果';
+    panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
-    p.classList.add('hidden-panel');
-    toggleBtn().textContent = '展开结果';
+    panel().classList.add('result-hidden');
+    bar().classList.add('result-hidden');
+    tglBtn().textContent = '展开结果';
   }
 }
 
@@ -47,21 +49,16 @@ function renderPrediction(result) {
   const pos = result.classification === '阳性';
   document.querySelector('#resultSummary').innerHTML = `<div class="result-lead ${pos ? 'positive' : 'negative'}"><div class="eyebrow">尿路结石患病风险概率</div><strong>${(prob * 100).toFixed(1)}%</strong><span>${result.classification}（阈值 ${result.threshold}）</span></div>`;
   document.querySelector('#imputationNote').hidden = true;
-  renderBaseProbs(result);
-  renderShapTable(result);
+  renderProbs(result);
+  renderTable(result);
   showResult();
-  requestAnimationFrame(() => {
-    renderDecision(result);
-    renderWaterfall(result);
-  });
+  requestAnimationFrame(() => { renderDecision(result); renderWaterfall(result); });
   panel().scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-/* ---------- 概率水平条形图 ---------- */
-function renderBaseProbs(result) {
-  const models = result.base_model_order.map((name, i) => ({
-    name, pct: result.base_model_probabilities[i] * 100
-  }));
+/* ---------- 概率水平条 ---------- */
+function renderProbs(result) {
+  const models = result.base_model_order.map((name, i) => ({ name, pct: result.base_model_probabilities[i] * 100 }));
   document.querySelector('#baseProbabilities').innerHTML = models.map(m => {
     const w = Math.max(m.pct, 4);
     const color = m.pct >= 50 ? '#d95a3e' : '#377699';
@@ -69,149 +66,120 @@ function renderBaseProbs(result) {
   }).join('');
 }
 
-/* ---------- SHAP 数据表 ---------- */
-function renderShapTable(result) {
+/* ---------- 贡献表 ---------- */
+function renderTable(result) {
   const rows = [...result.shap.contributions].sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));
   document.querySelector('#shapTableBody').innerHTML = rows.map((item, i) => `<tr><td>${i + 1}</td><td>${item.label}</td><td>${item.source_type === 'base_model_probability' ? '基模型概率' : '临床直接项'}</td><td>${fmt(item.value)}</td><td class="${item.shap_value >= 0 ? 'contribution-positive' : 'contribution-negative'}">${item.shap_value >= 0 ? '+' : ''}${fmt(item.shap_value, 5)}</td></tr>`).join('');
 }
 
 /* ========== SHAP 决策路径（阶梯折线） ========== */
 function renderDecision(result) {
-  const { ctx, w, h } = canvasCtx('decisionPlot', 720, 520);
+  const { c, w, h } = ctx('decisionPlot', 720, 520);
   const items = [...result.shap.contributions]
     .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
     .slice(0, 20);
 
-  const left = 200, right = w - 30, top = 36, bot = h - 32;
-  const rowH = Math.max(21, (bot - top) / items.length);
-
-  const baseVal = result.shap.base_value;
-  const predVal = result.shap.prediction_explained;
-  const xMin = Math.min(baseVal, predVal) - 0.2;
-  const xMax = Math.max(baseVal, predVal) + 0.2;
-  const toX = (v) => left + ((v - xMin) / (xMax - xMin)) * (right - left);
-
-  ctx.clearRect(0, 0, w, h);
-  ctx.font = '11px system-ui';
-
-  // 网格
-  ctx.strokeStyle = '#e6ece8'; ctx.lineWidth = 0.6;
-  const ticks = [xMin, (xMin + xMax) / 2, xMax];
-  // 额外刻度
-  for (let i = 0; i <= 5; i++) {
-    const x = left + (right - left) * i / 5;
-    ctx.beginPath(); ctx.moveTo(x, top - 6); ctx.lineTo(x, bot + 2); ctx.stroke();
-  }
-  // 数值刻度
-  ctx.fillStyle = '#869889'; ctx.textAlign = 'center'; ctx.font = '10px ui-monospace';
-  for (let i = 0; i <= 5; i++) {
-    const v = xMin + (xMax - xMin) * i / 5;
-    ctx.fillText(v.toFixed(2), left + (right - left) * i / 5, bot + 14);
-  }
-
-  // 基线竖线
-  const baseX = toX(baseVal);
-  ctx.strokeStyle = '#b4c4b9'; ctx.setLineDash([5, 5]); ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(baseX, top - 10); ctx.lineTo(baseX, bot + 3); ctx.stroke();
-  ctx.setLineDash([]);
-
-  // ---------- 背景条 + 特征名 ----------
-  const cum = [baseVal];
+  const L = 200, R = w - 32, T = 38, B = h - 34;
+  const rh = Math.max(21, (B - T) / items.length);
+  const baseV = result.shap.base_value;
+  const predV = result.shap.prediction_explained;
+  const xMin = Math.min(baseV, predV) - 0.2;
+  const xMax = Math.max(baseV, predV) + 0.2;
+  const x = (v) => L + ((v - xMin) / (xMax - xMin)) * (R - L);
+  const cum = [baseV];
   for (let i = 0; i < items.length; i++) cum.push(cum[i] + items[i].shap_value);
 
+  c.clearRect(0, 0, w, h);
+
+  // 竖网格
+  c.strokeStyle = '#e7ece8'; c.lineWidth = 0.6;
+  for (let i = 0; i <= 5; i++) {
+    const gx = L + (R - L) * i / 5;
+    c.beginPath(); c.moveTo(gx, T - 6); c.lineTo(gx, B + 2); c.stroke();
+  }
+  c.fillStyle = '#869889'; c.textAlign = 'center'; c.font = '10px ui-monospace';
+  for (let i = 0; i <= 5; i++)
+    c.fillText((xMin + (xMax - xMin) * i / 5).toFixed(2), L + (R - L) * i / 5, B + 15);
+
+  // 基线虚线
+  const bx = x(baseV);
+  c.strokeStyle = '#b4c4b9'; c.setLineDash([5, 5]); c.lineWidth = 1;
+  c.beginPath(); c.moveTo(bx, T - 10); c.lineTo(bx, B + 3); c.stroke();
+  c.setLineDash([]);
+
+  // 背景色条 + 特征名
   for (let i = 0; i < items.length; i++) {
-    const y = top + i * rowH;
-    const x0 = toX(cum[i]);
-    const x1 = toX(cum[i + 1]);
-    const isPos = items[i].shap_value >= 0;
-    const rectX = Math.min(x0, x1);
-    const rectW = Math.max(Math.abs(x1 - x0), 2);
+    const y = T + i * rh;
+    const x0 = x(cum[i]), x1 = x(cum[i + 1]);
+    const rx = Math.min(x0, x1), rw = Math.max(Math.abs(x1 - x0), 2);
+    c.fillStyle = items[i].shap_value >= 0 ? 'rgba(232,118,95,0.18)' : 'rgba(82,123,156,0.18)';
+    c.fillRect(rx, y + 3, rw, rh - 6);
 
-    ctx.fillStyle = isPos ? 'rgba(232,118,95,0.18)' : 'rgba(82,123,156,0.18)';
-    ctx.fillRect(rectX, y + 3, rectW, rowH - 6);
-
-    ctx.fillStyle = '#1f2e2c'; ctx.textAlign = 'right'; ctx.font = '11px system-ui';
-    const label = items[i].key;
-    const maxW = left - 14;
-    const displayLabel = ctx.measureText(label).width > maxW ? label.slice(0, 12) + '…' : label;
-    ctx.fillText(displayLabel, left - 8, y + rowH * 0.6);
+    c.fillStyle = '#1f2e2c'; c.textAlign = 'right'; c.font = '11px system-ui';
+    const lbl = items[i].key;
+    c.fillText(c.measureText(lbl).width > (L - 14) ? lbl.slice(0, 12) + '…' : lbl, L - 8, y + rh * 0.6);
   }
 
-  // ---------- 阶梯折线 ----------
-  ctx.strokeStyle = '#112b23'; ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(baseX, top);
+  // 阶梯折线
+  c.strokeStyle = '#112b23'; c.lineWidth = 2.4; c.lineJoin = 'round'; c.lineCap = 'round';
+  c.beginPath();
+  c.moveTo(bx, T);
   for (let i = 0; i < items.length; i++) {
-    const y = top + i * rowH + rowH / 2;
-    const x = toX(cum[i + 1]);
-    ctx.lineTo(toX(cum[i]), y);
-    ctx.lineTo(x, y);
+    const y = T + i * rh + rh / 2;
+    c.lineTo(x(cum[i]), y);
+    c.lineTo(x(cum[i + 1]), y);
   }
-  ctx.lineTo(toX(cum[cum.length - 1]), bot);
-  ctx.stroke();
+  c.lineTo(x(predV), B);
+  c.stroke();
 
-  // 圆点标记
-  ctx.fillStyle = '#0d1f19';
-  ctx.beginPath(); ctx.arc(toX(predVal), bot, 4.5, 0, Math.PI * 2); ctx.fill();
+  // 终点圆
+  c.fillStyle = '#0d1f19';
+  c.beginPath(); c.arc(x(predV), B, 4.5, 0, Math.PI * 2); c.fill();
 
-  // 输出标注
-  ctx.fillStyle = '#2a5a46'; ctx.font = 'bold 11px ui-monospace'; ctx.textAlign = 'left';
-  ctx.fillText(`输出 ${fmt(predVal)}`, toX(predVal) + 10, bot + 3);
-  // 基线标注
-  ctx.fillStyle = '#778f81'; ctx.font = '10px ui-monospace'; ctx.textAlign = 'right';
-  ctx.fillText(`基线 ${fmt(baseVal)}`, baseX - 8, bot + 3);
+  c.fillStyle = '#2a5a46'; c.font = 'bold 11px ui-monospace'; c.textAlign = 'left';
+  c.fillText(`输出 ${fmt(predV)}`, x(predV) + 10, B + 3);
+  c.fillStyle = '#778f81'; c.font = '10px ui-monospace'; c.textAlign = 'right';
+  c.fillText(`基线 ${fmt(baseV)}`, bx - 8, B + 3);
 }
 
 /* ========== SHAP 瀑布图 ========== */
 function renderWaterfall(result) {
-  const { ctx, w, h } = canvasCtx('waterfallPlot', 720, 400);
+  const { c, w, h } = ctx('waterfallPlot', 720, 400);
   const items = [...result.shap.contributions]
     .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
     .slice(0, 14);
 
-  const left = 200, right = w - 24, top = 28, bot = h - 20;
-  const rowH = Math.max(23, (bot - top) / items.length);
-  const maxVal = Math.max(...items.map(i => Math.abs(i.shap_value)), 1e-9);
-  const midX = left + (right - left) * 0.42;
-  const barMaxW = (right - left) * 0.32;
+  const L = 200, R = w - 24, T = 28, B = h - 20;
+  const rh = Math.max(23, (B - T) / items.length);
+  const mx = Math.max(...items.map(i => Math.abs(i.shap_value)), 1e-9);
+  const midX = L + (R - L) * 0.42;
+  const bw = (R - L) * 0.32;
 
-  ctx.clearRect(0, 0, w, h);
+  c.clearRect(0, 0, w, h);
+  c.strokeStyle = '#dfe6e1'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(midX, T - 6); c.lineTo(midX, B + 4); c.stroke();
 
-  // 中线
-  ctx.strokeStyle = '#dfe6e1'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(midX, top - 6); ctx.lineTo(midX, bot + 4); ctx.stroke();
+  items.forEach((it, i) => {
+    const y = T + i * rh;
+    const barW = (Math.abs(it.shap_value) / mx) * bw;
+    const pos = it.shap_value >= 0;
+    c.fillStyle = pos ? '#c45142' : '#327596';
+    c.fillRect(pos ? midX : midX - barW, y + 3, barW, rh - 6);
 
-  items.forEach((item, i) => {
-    const y = top + i * rowH;
-    const barW = (Math.abs(item.shap_value) / maxVal) * barMaxW;
-    const isPos = item.shap_value >= 0;
-    const barX = isPos ? midX : midX - barW;
+    c.fillStyle = '#334155'; c.textAlign = 'right'; c.font = '11px system-ui';
+    c.fillText(it.key, L - 8, y + rh * 0.62);
 
-    // 条
-    ctx.fillStyle = isPos ? '#c45142' : '#327596';
-    ctx.fillRect(barX, y + 3, barW, rowH - 6);
-
-    // 特征名
-    ctx.fillStyle = '#334155'; ctx.textAlign = 'right'; ctx.font = '11px system-ui';
-    ctx.fillText(item.key, left - 8, y + rowH * 0.62);
-
-    // 数值
-    ctx.fillStyle = '#37474f'; ctx.font = '10px ui-monospace';
-    const sign = isPos ? '+' : '';
-    if (isPos) {
-      ctx.textAlign = 'left';
-      ctx.fillText(`${sign}${fmt(item.shap_value, 4)}`, midX + barW + 5, y + rowH * 0.62);
-    } else {
-      ctx.textAlign = 'right';
-      ctx.fillText(`${fmt(item.shap_value, 4)}`, midX - barW - 5, y + rowH * 0.62);
-    }
+    c.fillStyle = '#37474f'; c.font = '10px ui-monospace';
+    if (pos) { c.textAlign = 'left'; c.fillText(`+${fmt(it.shap_value, 4)}`, midX + barW + 5, y + rh * 0.62); }
+    else     { c.textAlign = 'right'; c.fillText(fmt(it.shap_value, 4), midX - barW - 5, y + rh * 0.62); }
   });
 }
 
-/* ========== 导出 ========== */
+/* ---------- 导出 ---------- */
 function clearResult() {
-  panel().classList.add('hidden-panel');
-  toggleBtn().textContent = '展开结果';
+  panel().classList.add('result-hidden');
+  bar().classList.add('result-hidden');
+  tglBtn().textContent = '展开结果';
 }
 
 export { clearResult, renderPrediction, toggleResultPanel };
