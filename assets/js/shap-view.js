@@ -42,17 +42,24 @@ export function renderPrediction(result, realLabel) {
   const isPos = result.classification === '阳性';
   const classificationEn = isPos ? 'Positive' : 'Negative';
   /* 概要 */
+  const isPosGround = realLabel === 1;
+  const groundTruth = realLabel !== null && realLabel !== undefined
+    ? (isPosGround ? 'Stone (Positive)' : 'No Stone (Negative)') : '';
   const labelHtml = (realLabel !== null && realLabel !== undefined)
-    ? `<span class="real-label">Actual: ${realLabel === 1 ? 'Stone (Positive)' : 'No Stone (Negative)'}</span>`
+    ? `<div class="gt-card${isPosGround ? ' positive' : ''}">
+        <strong>Ground Truth</strong>
+        <span class="badge ${isPosGround ? 'pos' : 'neg'}">${groundTruth}</span>
+      </div>`
     : '';
+
   document.querySelector('#resultSummary').innerHTML = `
     <div class="result-card${isPos ? ' positive' : ''}">
       <strong>Disease Probability</strong>
       <span class="prob-big">${(result.probability * 100).toFixed(1)}%</span>
       <span class="badge ${isPos ? 'pos' : 'neg'}">${classificationEn}</span>
       <span class="threshold-note">Threshold: ${(result.threshold * 100).toFixed(1)}%</span>
-      ${labelHtml}
-    </div>`;
+    </div>
+    ${labelHtml}`;
 
   /* 基模型概率 */
   const baseHtml = (result.base_model_probabilities || [])

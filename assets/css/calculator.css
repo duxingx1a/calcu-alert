@@ -37,7 +37,9 @@ h1 { margin:6px 0 4px; font:600 clamp(2rem,4vw,3.6rem)/1.05 var(--serif); letter
 .badge.pos { background:var(--red-soft); color:var(--red); }
 .badge.neg { background:var(--blue-soft); color:var(--blue); }
 .threshold-note { display:block; color:var(--muted); font-size:12px; margin-top:6px; }
-.real-label { display:inline-block; margin-top:8px; padding:3px 12px; border-radius:4px; background:var(--wash); font:600 13px var(--mono); color:var(--ink); }
+.gt-card { margin-top:12px; padding:12px 16px; border-radius:8px; background:var(--bg,#fff); border:1px solid var(--line,#e0e0e0); display:flex; align-items:center; gap:12px; }
+.gt-card.positive { border-color:#FF0D5733; background:#FFF5F7; }
+.gt-card strong { font:600 14px var(--mono); color:var(--ink); }
 
 .result-top-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
 .result-top-row .prob-panel { border-top:0; padding-top:0; margin-top:0; }
