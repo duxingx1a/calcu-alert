@@ -9,15 +9,10 @@
 </head>
 <body>
   <main class="page">
-    <header class="masthead">
-      <div></div>
+    <div class="topbar" role="status">
       <a class="nav-cta" href="index.html">Project Page</a>
-    </header>
-
-    <section class="intro" aria-label="Model description">
-    </section>
-
-    <div class="status" role="status"><span id="apiDot" class="status-dot"></span><span id="apiText">Verifying model artifacts…</span></div>
+      <div class="status"><span id="apiDot" class="status-dot"></span><span id="apiText">Verifying model artifacts…</span></div>
+    </div>
     <section class="quickbar"><div><span class="quickbar-label">Example Cases</span><div id="samples" class="samples" aria-label="Example cases"></div></div><div class="quick-actions"><button id="calculateButton" class="primary" type="submit" form="calculatorForm">Calculate Risk &amp; Explain</button><button id="resetButton" class="secondary" type="button">Clear</button></div></section>
 
     <form id="calculatorForm" novalidate>
