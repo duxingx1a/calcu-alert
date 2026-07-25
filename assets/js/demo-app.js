@@ -1,6 +1,6 @@
-import { getExamples, getHealth, getMetadata, predict } from './api-client.js';
-import { fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js';
-import { clearResult, renderPrediction } from './shap-view.js';
+import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250725';
+import { fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250725';
+import { clearResult, renderPrediction } from './shap-view.js?v=250725';
 
 let metadata;
 let busy = false;

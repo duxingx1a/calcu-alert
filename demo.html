@@ -18,24 +18,24 @@
     </section>
 
     <div class="status" role="status"><span id="apiDot" class="status-dot"></span><span id="apiText">正在核验模型工件…</span></div>
-    <section class="quickbar"><div><span class="quickbar-label">真实外部验证示例</span><div id="samples" class="samples" aria-label="示例输入"></div></div><div class="quick-actions"><button id="calculateButton" class="primary" type="submit" form="calculatorForm">计算风险并解释</button><button id="resetButton" class="secondary" type="button">清空</button></div></section>
+    <section class="quickbar"><div><span class="quickbar-label">示例病例</span><div id="samples" class="samples" aria-label="示例输入"></div></div><div class="quick-actions"><button id="calculateButton" class="primary" type="submit" form="calculatorForm">计算风险并解释</button><button id="resetButton" class="secondary" type="button">清空</button></div></section>
 
     <form id="calculatorForm" novalidate>
-      <section class="panel"><div class="panel-header"><h2>一、必填特征</h2><small>Base XGBoost mean |SHAP| Top 10</small></div><div id="requiredFields" class="field-grid"></div></section>
-      <section class="panel"><div class="panel-header"><h2>二、选填临床特征</h2><small>已预填训练集均值/众数，可修改</small></div><div id="optionalFields"></div></section>
+      <section class="panel"><div class="panel-header"><h2>一、必填特征</h2></div><div id="requiredFields" class="field-grid"></div></section>
+      <section class="panel"><div class="panel-header"><h2>二、临床特征</h2></div><div id="optionalFields"></div></section>
       <p class="disclaimer">本工具用于科研演示和模型复现，不构成诊断、治疗建议或临床决策依据。请勿输入可识别患者身份的信息。</p>
     </form>
 
     <section id="resultPanel" class="panel result-panel" aria-live="polite" hidden>
-      <div class="panel-header"><h2>三、真实模型结果</h2><small id="featureCount">严格 87 维元输入</small></div>
+      <div class="panel-header"><h2>三、计算结果</h2><small id="featureCount"></small></div>
       <div id="resultSummary" class="result-summary"></div><p id="imputationNote" class="result-note"></p>
-      <div class="subgrid"><article class="subpanel"><h3>10 个基础模型阳性概率</h3><div id="baseProbabilities"></div></article><article class="subpanel"><h3>解释记法</h3><p class="caption">赭红色表示推高元模型边际，蓝色表示降低元模型边际；两类颜色不直接等同于概率百分点。</p></article></div>
-      <article class="subpanel"><h3>SHAP 决策图 · 87 个输入的累积路径</h3><div class="chart-wrap"><canvas id="decisionPlot" class="chart" aria-label="SHAP决策图"></canvas></div><p class="caption">从基线边际开始，按元模型固定输入顺序累加全部 87 个 SHAP 值，终点应与元模型预测边际一致。</p></article>
+      <div class="subgrid"><article class="subpanel"><h3>各模型阳性概率</h3><div id="baseProbabilities"></div></article><article class="subpanel"><h3>图例说明</h3><p class="caption">红色表示推高风险，蓝色表示降低风险</p></article></div>
+      <article class="subpanel"><h3>SHAP 决策图</h3><div class="chart-wrap"><canvas id="decisionPlot" class="chart" aria-label="SHAP决策图"></canvas></div></article>
       <article class="subpanel"><h3>SHAP 瀑布图 · 绝对贡献前 20 项</h3><div class="chart-wrap"><canvas id="waterfallPlot" class="chart" aria-label="SHAP瀑布图"></canvas></div></article>
-      <article class="subpanel"><h3>完整 87 维贡献数据</h3><div class="table-wrap"><table class="shap-table"><thead><tr><th>秩</th><th>输入项</th><th>类型</th><th>模型使用值</th><th>SHAP</th></tr></thead><tbody id="shapTableBody"></tbody></table></div></article>
+      <article class="subpanel"><h3>完整贡献数据</h3><div class="table-wrap"><table class="shap-table"><thead><tr><th>秩</th><th>输入项</th><th>类型</th><th>模型使用值</th><th>SHAP</th></tr></thead><tbody id="shapTableBody"></tbody></table></div></article>
       <div class="actions"><button id="closeResult" class="secondary" type="button">收起结果</button></div>
     </section>
   </main>
-  <script type="module" src="assets/js/demo-app.js"></script>
+  <script type="module" src="assets/js/demo-app.js?v=250725"></script>
 </body>
 </html>
