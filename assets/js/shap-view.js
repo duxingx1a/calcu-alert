@@ -19,14 +19,18 @@ export function toggleResultPanel(show) {
   const t = toggleBar();
   const btn = document.querySelector('#toggleResult');
 
-  if (typeof show !== 'boolean') {
-    // 切换模式：根据当前状态反转
+  const isToggle = typeof show !== 'boolean';
+  if (isToggle) {
+    // 切换模式：根据当前面板状态反转，按钮栏始终可见
     show = p.style.display === 'none';
   }
 
   const s = show ? '' : 'none';
   p.style.display = s;
-  t.style.display = s;
+  // 按钮栏始终可见（切换时不隐藏），仅在清空时隐藏
+  if (!isToggle) {
+    t.style.display = s;
+  }
 
   if (btn) {
     btn.textContent = show ? '收起结果' : '展开结果';
