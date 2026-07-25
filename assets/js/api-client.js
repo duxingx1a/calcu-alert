@@ -1,8 +1,10 @@
+const API_BASE = 'http://8.137.187.63:18050';
+
 async function requestJson(path, options = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), options.timeout || 35000);
   try {
-    const response = await fetch(path, {
+    const response = await fetch(`${API_BASE}${path}`, {
       ...options,
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       signal: controller.signal
