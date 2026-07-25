@@ -1,5 +1,5 @@
 import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250725';
-import { fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250725';
+import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250726';
 import { clearResult, renderPrediction } from './shap-view.js?v=250725';
 
 let metadata;
@@ -23,7 +23,7 @@ async function initialise() {
     metadata = await getMetadata();
     renderForm(metadata);
     document.querySelector('#featureCount').textContent = `${metadata.features.length} 个临床特征`;
-    setStatus(true, `计算引擎已就绪 · ${metadata.features.length} 项输入`);
+    setStatus(true, '计算引擎已就绪');
 
     let examples = SAMPLES;
     try {
@@ -56,6 +56,7 @@ async function submitForm(event) {
   setBusy(true); clearResult();
   try {
     renderPrediction(await predict(values));
+    collapseAllSections();
   } catch (error) {
     document.querySelector('#resultSummary').innerHTML = `<div class="error-box">${error.message}</div>`;
     document.querySelector('#resultPanel').hidden = false;

@@ -48,8 +48,11 @@ const CATEGORY_OPTIONS = {
 };
 
 const SAMPLES = [
-  { name: '示例病例 A', values: { Gender: 0, Uric_WBC: 0, Age: 31, Uric_specific_gravity: 1.013, Uric_conductivity: 14.2, Uric_RBC: 0, Waist_to_hip_ratio: 0.92, Uric_PH: 6.5, BRI: 4.36, Systolic_BP: 118 } },
-  { name: '示例病例 B', values: { Gender: 1, Uric_WBC: 1, Age: 54, Uric_specific_gravity: 1.01, Uric_conductivity: 25, Uric_RBC: 0, Waist_to_hip_ratio: 0.96, Uric_PH: 7.5, BRI: 4.8, Systolic_BP: 164 } }
+  { name: '病例 A', values: { Gender: 0, Uric_WBC: 0, Age: 31, Uric_specific_gravity: 1.013, Uric_conductivity: 14.2, Uric_RBC: 0, Waist_to_hip_ratio: 0.92, Uric_PH: 6.5, BRI: 4.36, Systolic_BP: 118 } },
+  { name: '病例 B', values: { Gender: 1, Uric_WBC: 1, Age: 54, Uric_specific_gravity: 1.01, Uric_conductivity: 25, Uric_RBC: 0, Waist_to_hip_ratio: 0.96, Uric_PH: 7.5, BRI: 4.8, Systolic_BP: 164 } },
+  { name: '病例 C', values: { Gender: 0, Uric_WBC: 28, Age: 45, Uric_specific_gravity: 1.02, Uric_conductivity: 18.5, Uric_RBC: 5, Waist_to_hip_ratio: 0.88, Uric_PH: 6.0, BRI: 5.2, Systolic_BP: 135 } },
+  { name: '病例 D', values: { Gender: 1, Uric_WBC: 3, Age: 62, Uric_specific_gravity: 1.005, Uric_conductivity: 8.7, Uric_RBC: 0, Waist_to_hip_ratio: 0.99, Uric_PH: 7.0, BRI: 6.1, Systolic_BP: 148 } },
+  { name: '病例 E', values: { Gender: 0, Uric_WBC: 12, Age: 38, Uric_specific_gravity: 1.018, Uric_conductivity: 21.3, Uric_RBC: 2, Waist_to_hip_ratio: 0.85, Uric_PH: 5.5, BRI: 3.9, Systolic_BP: 110 } }
 ];
 
 function featureLabel(key) {
@@ -93,13 +96,13 @@ function renderForm(metadata) {
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(definition);
   });
-  document.querySelector('#optionalFields').innerHTML = Object.entries(grouped).map(([group, definitions]) => `<section class="optional-section"><button type="button" class="section-toggle" aria-expanded="false"><span>${GROUPS[group] || group}</span><span>展开</span></button><div class="optional-grid" hidden>${definitions.map((definition) => renderField(definition, definition.index)).join('')}</div></section>`).join('');
+  document.querySelector('#optionalFields').innerHTML = Object.entries(grouped).map(([group, definitions]) => `<section class="optional-section"><button type="button" class="section-toggle" aria-expanded="false"><span>${GROUPS[group] || group}</span><span>展开</span></button><div class="optional-grid" style="display:none">${definitions.map((definition) => renderField(definition, definition.index)).join('')}</div></section>`).join('');
   document.querySelectorAll('.section-toggle').forEach((button) => button.addEventListener('click', () => {
     const panel = button.nextElementSibling;
     const expanded = button.getAttribute('aria-expanded') === 'true';
     button.setAttribute('aria-expanded', String(!expanded));
     button.lastElementChild.textContent = expanded ? '展开' : '收起';
-    panel.hidden = expanded;
+    panel.style.display = expanded ? 'none' : 'grid';
   }));
   const gender = metadata.features.find((item) => item.key === 'Gender');
   const genderIndex = metadata.features.indexOf(gender);
@@ -128,8 +131,9 @@ function readValues(metadata) {
 
 function fillValues(metadata, values) {
   metadata.features.forEach((definition, index) => {
+    if (!(definition.key in values)) return;
     const element = document.querySelector(`#feature-${index}`);
-    if (element) element.value = values[definition.key] ?? '';
+    if (element) element.value = values[definition.key];
   });
 }
 
@@ -150,4 +154,12 @@ function validate(values, metadata) {
   return missing;
 }
 
-export { CATEGORY_OPTIONS, SAMPLES, TOP_10, clearErrors, fillValues, readValues, renderForm, validate };
+function collapseAllSections() {
+  document.querySelectorAll('.section-toggle').forEach((button) => {
+    button.setAttribute('aria-expanded', 'false');
+    button.lastElementChild.textContent = '展开';
+    button.nextElementSibling.style.display = 'none';
+  });
+}
+
+export { CATEGORY_OPTIONS, SAMPLES, TOP_10, clearErrors, collapseAllSections, fillValues, readValues, renderForm, validate };
