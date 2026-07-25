@@ -15,10 +15,10 @@ function renderPrediction(result) {
   document.querySelector('#imputationNote').hidden = true;
   renderBaseProbabilities(result);
   renderShapTable(result);
+  // 只用 style.display 控制显隐，不碰 hidden 属性
+  document.querySelector('#resultPanel').removeAttribute('hidden');
   document.querySelector('#resultPanel').style.display = '';
-  document.querySelector('#resultPanel').hidden = false;
   document.querySelector('#toggleResult').textContent = '收起结果';
-  // 延迟渲染图表，确保 resultPanel 已被浏览器布局
   requestAnimationFrame(() => {
     renderDecisionPlot(result);
     renderWaterfall(result);
@@ -27,11 +27,21 @@ function renderPrediction(result) {
 }
 
 function renderBaseProbabilities(result) {
-  document.querySelector('#baseProbabilities').innerHTML = result.base_model_order
-    .map((name, index) => {
-      const pct = (result.base_model_probabilities[index] * 100).toFixed(1);
-      return `<div class="prob-card"><span>${name}</span><strong>${pct}%</strong></div>`;
-    }).join('');
+  const models = result.base_model_order.map((name, index) => ({
+    name,
+    pct: result.base_model_probabilities[index] * 100
+  }));
+  const total = models.length;
+
+  document.querySelector('#baseProbabilities').innerHTML = models.map((m, idx) => {
+    const widthPct = Math.max(m.pct, 4);
+    const barFill = m.pct >= 50 ? '#e8765f' : '#527b9c';
+    return `<div class="prob-row">
+      <span class="prob-label">${m.name}</span>
+      <div class="prob-bar-track"><div class="prob-bar-fill" style="width:${widthPct}%;background:${barFill};"></div></div>
+      <strong class="prob-val">${m.pct.toFixed(1)}%</strong>
+    </div>`;
+  }).join('');
 }
 
 function renderShapTable(result) {
@@ -54,59 +64,113 @@ function canvasContext(id, defaultWidth, defaultHeight) {
 }
 
 function renderDecisionPlot(result) {
-  const { context, width, height } = canvasContext('decisionPlot', 700, 520);
-  // 取前 25 项，避免 87 项挤在一起
+  const { context, width, height } = canvasContext('decisionPlot', 700, 500);
+
+  // 按贡献绝对值排序，取前 20 项作为路径节点
   const values = [...result.shap.contributions]
     .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
-    .slice(0, 25);
-  const left = 210; const right = width - 32; const top = 34; const bottom = height - 28;
-  const row = Math.max(18, (bottom - top) / values.length);
-  const min = Math.min(result.shap.base_value, result.shap.prediction_explained, ...values.map((item) => item.shap_value));
-  const max = Math.max(result.shap.base_value, result.shap.prediction_explained, ...values.map((item) => item.shap_value));
-  const scale = (value) => left + ((value - min) / Math.max(max - min, 1e-9)) * (right - left);
+    .slice(0, 20);
+
+  const left = 195; const right = width - 36; const top = 28; const bottom = height - 26;
+  const rowH = Math.max(20, (bottom - top) / values.length);
+
+  // X 轴范围：base_value 到 prediction_explained，留一点边距
+  const xMin = Math.min(result.shap.base_value, result.shap.prediction_explained) - 0.15;
+  const xMax = Math.max(result.shap.base_value, result.shap.prediction_explained) + 0.15;
+  const xScale = (v) => left + ((v - xMin) / (xMax - xMin)) * (right - left);
 
   context.clearRect(0, 0, width, height);
-  context.font = '12px system-ui'; context.textAlign = 'left'; context.fillStyle = '#50605d';
-  context.fillText('SHAP 决策图 · 按贡献绝对值排序前25项', left, 20);
 
+  // 网格线
+  context.strokeStyle = '#e8eeea'; context.lineWidth = 0.6;
+  for (let i = 0; i <= 4; i++) {
+    const x = left + (right - left) * i / 4;
+    context.beginPath(); context.moveTo(x, top - 4); context.lineTo(x, bottom + 2); context.stroke();
+  }
+
+  // 基线虚线
+  const baseX = xScale(result.shap.base_value);
+  const predX = xScale(result.shap.prediction_explained);
+  context.strokeStyle = '#b7c4bd'; context.setLineDash([4, 4]); context.lineWidth = 1.2;
+  context.beginPath(); context.moveTo(baseX, top - 5); context.lineTo(baseX, bottom + 4); context.stroke();
+  context.setLineDash([]);
+
+  // X 轴刻度标签
+  context.fillStyle = '#82928a'; context.font = '10px ui-monospace'; context.textAlign = 'center';
+  for (let i = 0; i <= 4; i++) {
+    const v = xMin + (xMax - xMin) * i / 4;
+    context.fillText(v.toFixed(2), left + (right - left) * i / 4, bottom + 14);
+  }
+
+  // 构建累积路径点
+  const pathPoints = [];
   let cumulative = result.shap.base_value;
-  const baseX = scale(cumulative); const finalX = scale(result.shap.prediction_explained);
+  pathPoints.push({ y: top - 6, x: xScale(cumulative), label: '基线', key: '基线' });
+  for (let idx = 0; idx < values.length; idx++) {
+    const prevCum = cumulative;
+    cumulative += values[idx].shap_value;
+    const y = top + idx * rowH;
+    // 每个特征占两个点：特征名所在行中间（step 的中点）
+    pathPoints.push({
+      y: y + rowH / 2,
+      x: xScale(prevCum),
+      label: values[idx].key,
+      shap: values[idx].shap_value
+    });
+    pathPoints.push({
+      y: y + rowH / 2,
+      x: xScale(cumulative),
+      label: values[idx].key,
+      shap: values[idx].shap_value
+    });
+  }
+  pathPoints.push({ y: bottom + 5, x: xScale(cumulative), label: '输出', key: '输出' });
 
-  // 基线和输出线
-  context.strokeStyle = '#b7c4bd'; context.setLineDash([3, 3]);
-  context.beginPath(); context.moveTo(baseX, top - 7); context.lineTo(baseX, bottom + 3); context.stroke();
-  context.setLineDash([]);
-  context.strokeStyle = '#315c4d'; context.setLineDash([3, 3]);
-  context.beginPath(); context.moveTo(finalX, top - 7); context.lineTo(finalX, bottom + 3); context.stroke();
-  context.setLineDash([]);
+  // 绘制阶梯路径线（深色主曲线）
+  // 先找垂直段方向
+  const mid = (left + right) / 2;
 
-  values.forEach((item, index) => {
-    const next = cumulative + item.shap_value;
-    const y = top + index * row;
-    const x0 = scale(cumulative); const x1 = scale(next);
-    const barW = Math.max(Math.abs(x1 - x0), 1.5);
+  // 绘制阶梯连线
+  context.strokeStyle = '#1a3a32'; context.lineWidth = 2.2; context.lineJoin = 'round'; context.lineCap = 'round';
+  context.beginPath();
+  let lastX = xScale(result.shap.base_value);
+  let lastY = top - 6;
+  context.moveTo(lastX, lastY);
+  for (let idx = 0; idx < values.length; idx++) {
+    const y = top + idx * rowH + rowH / 2;
+    const afterX = xScale(result.shap.base_value + values.slice(0, idx + 1).reduce((s, v) => s + v.shap_value, 0));
+    // 垂直下移
+    context.lineTo(lastX, y);
+    // 水平移动到新累积值
+    context.lineTo(afterX, y);
+    lastX = afterX;
+    lastY = y;
+  }
+  context.lineTo(lastX, bottom + 5);
+  context.stroke();
 
-    // 连接线
-    context.strokeStyle = '#d0d9d4'; context.lineWidth = 0.8;
-    context.beginPath(); context.moveTo(x0, y + row * 0.5); context.lineTo(x1, y + row * 0.5); context.stroke();
-    // 色条
-    context.fillStyle = item.shap_value >= 0 ? '#e8765f' : '#527b9c';
-    context.fillRect(Math.min(x0, x1), y + 3, barW, row - 6);
+  // 渐变色填充区域（红/蓝）
+  for (let idx = 0; idx < values.length; idx++) {
+    const y = top + idx * rowH;
+    const x0 = xScale(result.shap.base_value + values.slice(0, idx).reduce((s, v) => s + v.shap_value, 0));
+    const x1 = xScale(result.shap.base_value + values.slice(0, idx + 1).reduce((s, v) => s + v.shap_value, 0));
+    const isPositive = values[idx].shap_value >= 0;
+    const halfW = 6;
+    context.fillStyle = isPositive ? 'rgba(232,118,95,0.22)' : 'rgba(82,123,156,0.22)';
+    context.fillRect(Math.min(x0, x1), y + 2, Math.abs(x1 - x0), rowH - 4);
     // 特征名
     context.fillStyle = '#142221'; context.textAlign = 'right'; context.font = '11px system-ui';
-    context.fillText(item.key, left - 8, y + row * 0.6);
-    // SHAP 值
-    if (index < 8 || Math.abs(item.shap_value) > 0.06) {
-      context.fillStyle = '#50605d'; context.textAlign = 'left'; context.font = '10px ui-monospace';
-      context.fillText(formatNumber(item.shap_value), Math.min(Math.max(x0, left) + 5, right - 34), y + row * 0.6);
-    }
-    cumulative = next;
-  });
+    context.fillText(values[idx].key, left - 8, y + rowH * 0.6);
+  }
 
-  // 底部标注
-  context.fillStyle = '#315c4d'; context.textAlign = 'left'; context.font = '10px ui-monospace';
-  context.fillText(`基线 ${formatNumber(result.shap.base_value)}`, baseX + 5, height - 10);
-  context.fillText(`输出 ${formatNumber(result.shap.prediction_explained)}`, Math.min(finalX + 5, right - 78), height - 10);
+  // 输出值标注
+  context.fillStyle = '#315c4d'; context.font = 'bold 11px ui-monospace'; context.textAlign = 'left';
+  const outLabel = `输出 ${formatNumber(result.shap.prediction_explained)}`;
+  context.fillText(outLabel, Math.min(predX + 8, right - 110), bottom + 4);
+
+  // 基线标注
+  context.fillStyle = '#82928a'; context.font = '10px ui-monospace'; context.textAlign = 'right';
+  context.fillText(`基线 ${formatNumber(result.shap.base_value)}`, baseX - 6, bottom + 4);
 }
 
 function renderWaterfall(result) {
@@ -150,18 +214,22 @@ function renderWaterfall(result) {
 
 function clearResult() {
   const panel = document.querySelector('#resultPanel');
-  panel.hidden = true;
   panel.style.display = 'none';
+  panel.setAttribute('hidden', '');
   document.querySelector('#toggleResult').textContent = '展开结果';
 }
 
 function toggleResultPanel() {
   const panel = document.querySelector('#resultPanel');
-  const isHidden = panel.style.display === 'none';
-  panel.style.display = isHidden ? '' : 'none';
-  panel.hidden = !isHidden; // 同步 hidden 属性
-  document.querySelector('#toggleResult').textContent = isHidden ? '收起结果' : '展开结果';
-  if (isHidden) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const isVisible = panel.style.display !== 'none';
+  panel.style.display = isVisible ? 'none' : '';
+  if (isVisible) {
+    panel.setAttribute('hidden', '');
+  } else {
+    panel.removeAttribute('hidden');
+  }
+  document.querySelector('#toggleResult').textContent = isVisible ? '展开结果' : '收起结果';
+  if (!isVisible) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export { clearResult, renderPrediction, toggleResultPanel };

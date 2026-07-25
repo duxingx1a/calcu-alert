@@ -29,13 +29,13 @@
     <section id="resultPanel" class="panel result-panel" aria-live="polite" hidden>
       <div class="panel-header"><h2>三、计算结果</h2><small id="featureCount"></small></div>
       <div id="resultSummary" class="result-summary"></div><p id="imputationNote" class="result-note"></p>
-      <div class="subgrid"><article class="subpanel prob-panel"><h3>各模型阳性概率</h3><div id="baseProbabilities" class="prob-grid"></div></article><article class="subpanel legend-panel"><h3>图例</h3><p class="caption">红色条/值表示推高风险的因子，蓝色条/值表示降低风险的因子</p></article></div>
-      <article class="subpanel"><h3>SHAP 决策图 · 累积贡献路径（前25项）</h3><div class="chart-wrap"><canvas id="decisionPlot" class="chart" aria-label="SHAP决策图"></canvas></div></article>
-      <article class="subpanel"><h3>SHAP 瀑布图 · 局部解释（前14项）</h3><div class="chart-wrap"><canvas id="waterfallPlot" class="chart" aria-label="SHAP瀑布图"></canvas></div></article>
+      <div class="subgrid"><article class="subpanel prob-panel"><h3>各模型阳性概率</h3><div id="baseProbabilities" class="prob-grid"></div></article><article class="subpanel legend-panel"><h3>图例</h3><p class="caption">红色：推高风险<br>蓝色：降低风险</p></article></div>
+      <article class="subpanel"><h3>SHAP 决策路径 · 累积贡献前 20 项</h3><div class="chart-wrap"><canvas id="decisionPlot" class="chart" aria-label="SHAP决策路径"></canvas></div></article>
+      <article class="subpanel"><h3>SHAP 瀑布图 · 局部解释前 14 项</h3><div class="chart-wrap"><canvas id="waterfallPlot" class="chart" aria-label="SHAP瀑布图"></canvas></div></article>
       <article class="subpanel"><h3>完整贡献数据</h3><div class="table-wrap"><table class="shap-table"><thead><tr><th>秩</th><th>输入项</th><th>类型</th><th>填入值</th><th>SHAP</th></tr></thead><tbody id="shapTableBody"></tbody></table></div></article>
       <div class="actions"><button id="toggleResult" class="secondary" type="button">收起结果</button></div>
     </section>
   </main>
-  <script type="module" src="assets/js/demo-app.js?v=250728"></script>
+  <script type="module" src="assets/js/demo-app.js?v=250729"></script>
 </body>
 </html>
