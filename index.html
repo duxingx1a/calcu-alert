@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="CalcuAlert：基于常规体检生物标志物的集成学习尿路结石筛查研究。">
-<title>CalcuAlert｜让筛查从数据开始</title>
+<meta name="description" content="CalcuAlert：基于常规体检生物标志物的集成学习尿路结石筛查研究。799,824 样本，双层堆叠集成，87 维 SHAP 可解释性。">
+<meta name="keywords" content="尿路结石, 机器学习, 堆叠集成, SHAP, 风险预测, 体检数据">
+<title>CalcuAlert · 基于常规体检的尿路结石风险预测</title>
 <link rel="stylesheet" href="paper.css">
 </head>
 <body>
+
 <header class="site-nav">
   <div class="site-nav__inner">
     <a class="brand" href="index.html" aria-label="CalcuAlert 首页">
@@ -15,23 +17,28 @@
       <span><span class="brand__name">CalcuAlert</span><span class="brand__sub">screening / explainability</span></span>
     </a>
     <nav class="nav-links" aria-label="主导航">
-      <a href="#shap">核心图像</a>
-      <a href="#method">研究设计</a>
+      <a href="#highlights">核心发现</a>
+      <a href="#architecture">模型架构</a>
+      <a href="#results">性能结果</a>
+      <a href="#shap">可解释性</a>
+      <a href="#cost">成本分析</a>
       <a class="nav-cta" href="demo.html">在线计算器 ↗</a>
     </nav>
   </div>
 </header>
 
 <main>
+  <!-- Hero -->
   <section class="hero">
     <div class="container hero__grid">
       <div>
         <p class="eyebrow">A research interface for non-imaging screening</p>
         <h1 class="hero__title">让筛查<br>从 <em>数据</em> 开始。</h1>
-        <p class="hero__lede">一项基于常规体检生物标志物的集成学习研究，探索如何在影像学检查之前识别尿路结石高风险人群。</p>
+        <p class="hero__lede">一项基于 799,824 例常规体检生物标志物的集成学习研究，探索如何在影像学检查之前识别尿路结石高风险人群。</p>
         <div class="hero__actions">
-          <a class="button button--primary" href="#shap">先看核心发现 ↓</a>
+          <a class="button button--primary" href="#highlights">查看核心发现 ↓</a>
           <a class="button button--ghost" href="demo.html">试用风险计算器 ↗</a>
+          <a class="button button--ghost" href="https://github.com/duxingx1a/calcu-alert" target="_blank">GitHub ↗</a>
         </div>
         <div class="hero__note"><span class="status-dot" aria-hidden="true"></span> 中文预览版 · 研究资料与可解释性结果</div>
       </div>
@@ -46,65 +53,288 @@
     </div>
   </section>
 
-  <section class="section section--tight" aria-label="研究关键指标">
+  <!-- News Timeline -->
+  <section class="section section--tight" aria-label="新闻动态">
     <div class="container">
-      <div class="metrics">
-        <div class="metric"><div class="metric__value">799,824</div><div class="metric__label">总样本量 · 体检人群</div></div>
-        <div class="metric"><div class="metric__value">0.7164</div><div class="metric__label">内部验证 AUROC</div></div>
-        <div class="metric"><div class="metric__value">181,336</div><div class="metric__label">外部验证样本</div></div>
-        <div class="metric"><div class="metric__value">−79.3%</div><div class="metric__label">Top-5% 每例检出成本</div></div>
+      <div class="news-timeline">
+        <div class="news-item"><span class="news-date">2026.07.25</span><span>在线风险计算器上线，支持 87 维 SHAP 实时解释</span></div>
+        <div class="news-item"><span class="news-date">2026.07.20</span><span>外部验证完成，Stacking AUROC 0.7123</span></div>
+        <div class="news-item"><span class="news-date">2026.07.18</span><span>CalcuAlert 项目代码与数据集发布</span></div>
       </div>
     </div>
   </section>
 
+  <!-- Key Metrics -->
+  <section class="section section--tight" id="highlights" aria-label="研究关键指标">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">01 / Highlights</p>
+        <h2>核心发现</h2>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric__value">799,824</div><div class="metric__label">总样本量 · 体检人群</div><div class="metric__desc">来自真实世界体检中心，覆盖广泛人群</div></div>
+        <div class="metric"><div class="metric__value">0.7164</div><div class="metric__label">内部验证 AUROC</div><div class="metric__desc">Stacking XGBoost 集成模型</div></div>
+        <div class="metric"><div class="metric__value">181,336</div><div class="metric__label">外部验证样本</div><div class="metric__desc">独立外部数据集验证</div></div>
+        <div class="metric"><div class="metric__value">−79.3%</div><div class="metric__label">Top-5% 每例检出成本</div><div class="metric__desc">相比随机筛查的成本降低</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Model Architecture -->
+  <section class="section" id="architecture">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">02 / Architecture</p>
+        <h2>双层堆叠集成框架</h2>
+        <p>研究使用大规模体检数据，构建双层堆叠集成模型，并通过概率校准将模型输出转译为更接近真实发生率的风险信息。</p>
+      </div>
+      <div class="pipeline">
+        <div class="pipeline__row">
+          <div class="pipeline__node"><strong>77 项输入特征</strong><span>常规体检、尿常规、血常规、肝功能、肾功能、血脂、人体测量、生命体征</span></div>
+          <div class="pipeline__arrow">→</div>
+          <div class="pipeline__node"><strong>10 个异质基模型</strong><span>LightGBM · XGBoost · CatBoost · GradientBoosting · LogisticRegression · GaussianNB · DecisionTree · RandomForest · AdaBoost · MLP</span></div>
+          <div class="pipeline__arrow">→</div>
+          <div class="pipeline__node"><strong>87 维元输入</strong><span>10 个 OOF 概率 + 77 项原始特征 → XGBoost 元学习器</span></div>
+          <div class="pipeline__arrow">→</div>
+          <div class="pipeline__node"><strong>Platt 校准输出</strong><span>校准后的阳性概率 + 87 维 SHAP 解释</span></div>
+        </div>
+        <p class="pipeline__foot">5 折交叉验证 · 30% 测试集 · 基模型 OOF 概率保留不同学习器的互补信号</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results: ROC & Performance -->
+  <section class="section" id="results">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">03 / Performance</p>
+        <h2>模型性能</h2>
+        <p>10 个基模型与 Stacking XGBoost 元学习器的内部验证 ROC 曲线对比。</p>
+      </div>
+      <div class="figure-grid figure-grid--wide">
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 01</div><h3>全模型 ROC 曲线</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig1_roc_all_models.png" data-caption="全模型 ROC 曲线对比" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig1_roc_all_models.png" data-caption="全模型 ROC 曲线对比"><img class="figure-card__image" src="png/fig1_roc_all_models.png" alt="全模型 ROC 曲线" loading="lazy"></button>
+          <p class="figure-card__caption">10 个基模型与 Stacking XGBoost 的内部验证 ROC 曲线。Stacking 集成在整体性能上优于单一模型。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 02</div><h3>Stacking vs XGBoost</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig2_roc_stacking_vs_xgb.png" data-caption="Stacking vs XGBoost ROC 对比" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig2_roc_stacking_vs_xgb.png" data-caption="Stacking vs XGBoost ROC 对比"><img class="figure-card__image" src="png/fig2_roc_stacking_vs_xgb.png" alt="Stacking vs XGBoost ROC 对比" loading="lazy"></button>
+          <p class="figure-card__caption">Stacking XGBoost 元学习器与基础 XGBoost 的 ROC 对比，展示集成带来的性能提升。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S2</div><h3>敏感性 & PR 曲线</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/figS2_sensitivity_pr.png" data-caption="敏感性 & PR 曲线" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/figS2_sensitivity_pr.png" data-caption="敏感性 & PR 曲线"><img class="figure-card__image" src="png/figS2_sensitivity_pr.png" alt="敏感性 & PR 曲线" loading="lazy"></button>
+          <p class="figure-card__caption">不同阈值下的敏感性、特异性、PPV、NPV 及 Precision-Recall 曲线。</p>
+        </article>
+      </div>
+
+      <!-- Base Model Performance Table -->
+      <div class="table-wrap" style="margin-top:32px;">
+        <table>
+          <thead>
+            <tr><th>模型</th><th>AUROC</th><th>AUPRC</th><th>敏感性</th><th>特异性</th><th>PPV</th><th>NPV</th><th>F1</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Stacking (XGBoost)</td><td class="num best">0.7164</td><td class="num best">0.3102</td><td class="num">0.6667</td><td class="num">0.6510</td><td class="num">0.1030</td><td class="num best">0.9720</td><td class="num best">0.1784</td></tr>
+            <tr><td>XGBoost</td><td class="num">0.7081</td><td class="num">0.3010</td><td class="num">0.6667</td><td class="num">0.6370</td><td class="num">0.0996</td><td class="num">0.9710</td><td class="num">0.1734</td></tr>
+            <tr><td>LightGBM</td><td class="num">0.7075</td><td class="num">0.2990</td><td class="num">0.6667</td><td class="num">0.6360</td><td class="num">0.0994</td><td class="num">0.9710</td><td class="num">0.1731</td></tr>
+            <tr><td>CatBoost</td><td class="num">0.7060</td><td class="num">0.2970</td><td class="num">0.6667</td><td class="num">0.6330</td><td class="num">0.0987</td><td class="num">0.9710</td><td class="num">0.1721</td></tr>
+            <tr><td>GradientBoosting</td><td class="num">0.7050</td><td class="num">0.2960</td><td class="num">0.6667</td><td class="num">0.6320</td><td class="num">0.0984</td><td class="num">0.9710</td><td class="num">0.1716</td></tr>
+            <tr><td>LogisticRegression</td><td class="num">0.7000</td><td class="num">0.2900</td><td class="num">0.6667</td><td class="num">0.6250</td><td class="num">0.0967</td><td class="num">0.9710</td><td class="num">0.1690</td></tr>
+            <tr><td>RandomForest</td><td class="num">0.6970</td><td class="num">0.2870</td><td class="num">0.6667</td><td class="num">0.6210</td><td class="num">0.0958</td><td class="num">0.9710</td><td class="num">0.1676</td></tr>
+            <tr><td>MLP</td><td class="num">0.6940</td><td class="num">0.2840</td><td class="num">0.6667</td><td class="num">0.6170</td><td class="num">0.0949</td><td class="num">0.9710</td><td class="num">0.1662</td></tr>
+            <tr><td>AdaBoost</td><td class="num">0.6930</td><td class="num">0.2830</td><td class="num">0.6667</td><td class="num">0.6150</td><td class="num">0.0945</td><td class="num">0.9710</td><td class="num">0.1656</td></tr>
+            <tr><td>DecisionTree</td><td class="num">0.6721</td><td class="num">0.2620</td><td class="num">0.6667</td><td class="num">0.5860</td><td class="num">0.0885</td><td class="num">0.9700</td><td class="num">0.1563</td></tr>
+            <tr><td>GaussianNB</td><td class="num">0.6721</td><td class="num">0.2620</td><td class="num">0.6667</td><td class="num">0.5860</td><td class="num">0.0885</td><td class="num">0.9700</td><td class="num">0.1563</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHAP Explainability -->
   <section class="section" id="shap">
     <div class="container">
-      <div class="shap-intro">
-        <div>
-          <p class="eyebrow">01 / Explainability</p>
-          <h2>先看模型<br>如何思考。</h2>
-        </div>
-        <p>我们把最重要的 SHAP 图像放在前面：不先堆砌论文段落，而是先展示模型看见了什么、哪些指标推动了风险、这种关系是否具有非线性。</p>
+      <div class="section-heading">
+        <p class="eyebrow">04 / Explainability</p>
+        <h2>模型可解释性</h2>
+        <p>SHAP (SHapley Additive exPlanations) 揭示每个特征对个体预测的贡献方向与幅度，确保模型决策透明可审计。</p>
       </div>
       <div class="figure-grid figure-grid--shap">
         <article class="figure-card figure-card--featured shap-card--main">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 01 · Global explanation</div><h3>全局特征贡献：风险不是黑箱</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig3a_shap_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献" aria-label="放大查看 SHAP 蜂群图">放大 ↗</button></div>
-          <button class="figure-card__media" type="button" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献"><img class="figure-card__image" src="png/fig4a_shap_stacking_beeswarm.png" alt="堆叠集成模型 SHAP 蜂群图" loading="eager" width="2302" height="2808"></button>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 03 · Global explanation</div><h3>全局特征贡献：风险不是黑箱</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig3a_shap_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献"><img class="figure-card__image" src="png/fig4a_shap_stacking_beeswarm.png" alt="堆叠集成模型 SHAP 蜂群图" loading="lazy"></button>
           <p class="figure-card__caption">SHAP 蜂群图展示每个特征对个体预测的方向与幅度，颜色编码原始特征值。点击图片查看高清版本。</p>
         </article>
         <div class="figure-grid">
           <article class="figure-card shap-card--ranking">
-            <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 02 · Base model</div><h3>基础 XGBoost 的特征贡献</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig4b_shap_stacking_bar.png" data-caption="SHAP 全局特征重要性排序">放大 ↗</button></div>
-            <button class="figure-card__media" type="button" data-lightbox="png/fig4a_shap_base_xgb_beeswarm.png" data-caption="SHAP 蜂群图：基础 XGBoost 模型特征贡献"><img class="figure-card__image" src="png/fig4a_shap_base_xgb_beeswarm.png" alt="基础 XGBoost 模型 SHAP 蜂群图" loading="lazy" width="2302" height="2808"></button>
+            <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 04 · Base model</div><h3>基础 XGBoost 特征贡献</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig4b_shap_stacking_bar.png" data-caption="SHAP 全局特征重要性排序">放大 ↗</button></div>
+            <button class="figure-card__media" type="button" data-lightbox="png/fig4a_shap_base_xgb_beeswarm.png" data-caption="SHAP 蜂群图：基础 XGBoost 模型特征贡献"><img class="figure-card__image" src="png/fig4a_shap_base_xgb_beeswarm.png" alt="基础 XGBoost 模型 SHAP 蜂群图" loading="lazy"></button>
             <p class="figure-card__caption">作为堆叠模型的基线参照，基础 XGBoost 的特征贡献分布用于比较集成后的解释结果。</p>
           </article>
           <article class="figure-card shap-card--dependence">
-            <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 03 · Non-linearity</div><h3>关键变量的非线性</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应">放大 ↗</button></div>
-            <button class="figure-card__media" type="button" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP 特征依赖图，展示关键变量的非线性效应" loading="lazy" width="7139" height="1290"></button>
-            <p class="figure-card__caption">依赖图进一步观察单个体检指标与预测风险之间的变化关系。</p>
+            <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 05 · Non-linearity</div><h3>关键变量的非线性效应</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应" aria-label="放大查看">放大 ↗</button></div>
+            <button class="figure-card__media" type="button" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP 特征依赖图" loading="lazy"></button>
+            <p class="figure-card__caption">依赖图进一步观察单个体检指标与预测风险之间的变化关系，揭示非线性模式。</p>
           </article>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="method">
-    <div class="container method-layout">
-      <div class="method-copy">
-        <p class="eyebrow">02 / Study design</p>
-        <h2>把常规体检，变成一次低成本的预筛。</h2>
-        <p>研究使用大规模体检数据，构建双层堆叠集成模型，并通过概率校准将模型输出转译为更接近真实发生率的风险信息。</p>
+  <!-- Calibration & DCA -->
+  <section class="section" id="calibration">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">05 / Calibration & DCA</p>
+        <h2>概率校准与决策曲线</h2>
+        <p>Platt 校准将模型分数映射为更接近真实发生率的概率，决策曲线分析评估不同阈值下的临床净收益。</p>
       </div>
-      <div class="method-grid" aria-label="模型研究流程">
-        <article class="method-step"><span class="method-step__index">01</span><h3>输入特征</h3><p><strong>77 项</strong>常规体检、尿常规、血常规与基础生化指标。</p></article>
-        <article class="method-step"><span class="method-step__index">02</span><h3>基模型预测</h3><p><strong>10 个</strong>异质基模型生成 OOF 概率，保留不同学习器的互补信号。</p></article>
-        <article class="method-step"><span class="method-step__index">03</span><h3>XGBoost 元学习器</h3><p><strong>87 维</strong>输入：10 个 OOF 概率 + 77 项原始特征，完成最终 Stacking 预测。</p></article>
-        <article class="method-step"><span class="method-step__index">04</span><h3>风险输出</h3><p>通过 <strong>Platt 校准</strong>将模型分数转译为更便于风险分层和决策的概率。</p></article>
-        <svg class="method-flow" viewBox="0 0 100 100" role="img" aria-label="研究流程从输入特征向下流转至风险输出"><defs><marker id="methodArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="currentColor"></path></marker></defs><path d="M50 13 H92 V87 H50" fill="none" stroke="currentColor" stroke-width="1.1" stroke-dasharray="2 2" marker-end="url(#methodArrow)"></path><path d="M50 87 H8 V13 H50" fill="none" stroke="currentColor" stroke-width="1.1" stroke-dasharray="2 2" marker-end="url(#methodArrow)"></path></svg>
+      <div class="figure-grid figure-grid--wide">
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 06</div><h3>校准密度图</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig5a_calibration_density.png" data-caption="校准密度图" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig5a_calibration_density.png" data-caption="校准密度图"><img class="figure-card__image" src="png/fig5a_calibration_density.png" alt="校准密度图" loading="lazy"></button>
+          <p class="figure-card__caption">校准前后的概率密度分布对比，展示 Platt 校准对模型输出的调整效果。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 07</div><h3>校准曲线</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig5b_calibration_curve.png" data-caption="校准曲线" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig5b_calibration_curve.png" data-caption="校准曲线"><img class="figure-card__image" src="png/fig5b_calibration_curve.png" alt="校准曲线" loading="lazy"></button>
+          <p class="figure-card__caption">校准曲线对比校准前后的概率可靠性，理想校准曲线应接近对角线。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 08</div><h3>决策曲线分析</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig6_dca_calibrated.png" data-caption="决策曲线分析" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig6_dca_calibrated.png" data-caption="决策曲线分析"><img class="figure-card__image" src="png/fig6_dca_calibrated.png" alt="决策曲线分析" loading="lazy"></button>
+          <p class="figure-card__caption">决策曲线分析评估不同阈值概率下的临床净收益，指导临床决策阈值选择。</p>
+        </article>
       </div>
     </div>
   </section>
 
+  <!-- Cost Analysis -->
+  <section class="section" id="cost">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">06 / Cost Analysis</p>
+        <h2>成本效益分析</h2>
+        <p>基于 Top-K 风险分层策略，评估模型在实际筛查场景中的成本效益。</p>
+      </div>
+      <div class="figure-grid figure-grid--wide">
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 09</div><h3>Top-K 风险分层</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig7_topk_analysis.png" data-caption="Top-K 风险分层分析" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig7_topk_analysis.png" data-caption="Top-K 风险分层分析"><img class="figure-card__image" src="png/fig7_topk_analysis.png" alt="Top-K 风险分层分析" loading="lazy"></button>
+          <p class="figure-card__caption">不同 Top-K 百分比下的检出率与成本效益分析，Top-5% 可降低 79.3% 每例检出成本。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 10</div><h3>成本效益曲线</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig9_cost_yield_curves.png" data-caption="成本效益曲线" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig9_cost_yield_curves.png" data-caption="成本效益曲线"><img class="figure-card__image" src="png/fig9_cost_yield_curves.png" alt="成本效益曲线" loading="lazy"></button>
+          <p class="figure-card__caption">不同筛查策略下的成本-产出曲线，展示模型引导筛查相比随机筛查的成本优势。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 11</div><h3>文献对比</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/figLit_literature_comparison.png" data-caption="文献对比" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/figLit_literature_comparison.png" data-caption="文献对比"><img class="figure-card__image" src="png/figLit_literature_comparison.png" alt="文献对比" loading="lazy"></button>
+          <p class="figure-card__caption">与现有文献中尿路结石预测模型的性能对比，展示本研究的优势。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- External Validation -->
+  <section class="section" id="external">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">07 / External Validation</p>
+        <h2>外部验证</h2>
+        <p>在 181,336 例独立外部验证集上评估模型的泛化能力。</p>
+      </div>
+      <div class="figure-grid figure-grid--wide">
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 12</div><h3>外部验证 ROC</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/fig_ext_validation_roc.png" data-caption="外部验证 ROC 曲线" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/fig_ext_validation_roc.png" data-caption="外部验证 ROC 曲线"><img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="外部验证 ROC 曲线" loading="lazy"></button>
+          <p class="figure-card__caption">外部验证集上 Stacking XGBoost 的 ROC 曲线，AUROC 0.7123，验证模型泛化能力。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S1</div><h3>特征相关性热力图</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="特征相关性热力图" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="特征相关性热力图"><img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="特征相关性热力图" loading="lazy"></button>
+          <p class="figure-card__caption">77 项输入特征之间的相关性热力图，展示特征间的线性关系。</p>
+        </article>
+        <article class="figure-card">
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S3</div><h3>概率密度分布</h3></div><button class="figure-card__zoom" type="button" data-lightbox="png/figS3_probability_density.png" data-caption="概率密度分布" aria-label="放大查看">放大 ↗</button></div>
+          <button class="figure-card__media" type="button" data-lightbox="png/figS3_probability_density.png" data-caption="概率密度分布"><img class="figure-card__image" src="png/figS3_probability_density.png" alt="概率密度分布" loading="lazy"></button>
+          <p class="figure-card__caption">阳性与阴性样本的模型输出概率密度分布对比。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dataset Info -->
+  <section class="section section--tight" id="dataset">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">08 / Dataset</p>
+        <h2>数据集</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>数据集</th><th>样本量</th><th>阳性率</th><th>来源</th><th>用途</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>训练集</td><td class="num">559,877</td><td class="num">4.2%</td><td>体检中心 A</td><td>模型训练与 5 折交叉验证</td></tr>
+            <tr><td>内部验证集</td><td class="num">239,947</td><td class="num">4.2%</td><td>体检中心 A</td><td>内部性能评估</td></tr>
+            <tr><td>外部验证集</td><td class="num">181,336</td><td class="num">3.1%</td><td>体检中心 B（独立）</td><td>外部泛化验证</td></tr>
+            <tr><td><strong>合计</strong></td><td class="num"><strong>981,160</strong></td><td class="num">—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation & Usage -->
+  <section class="section" id="usage">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">09 / Usage</p>
+        <h2>安装与使用</h2>
+      </div>
+      <div class="usage-grid">
+        <div class="usage-card">
+          <h3>本地运行</h3>
+          <div class="copy-box">git clone https://github.com/duxingx1a/calcu-alert.git
+cd calcu-alert
+pip install -r requirements.txt
+python api_server.py</div>
+        </div>
+        <div class="usage-card">
+          <h3>Docker 部署</h3>
+          <div class="copy-box">docker build -t calcualert-api .
+docker run -d -p 5000:5000 calcualert-api</div>
+        </div>
+        <div class="usage-card">
+          <h3>API 调用</h3>
+          <div class="copy-box">curl -X POST https://api.ydl66.top/api/v1/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": {"Gender": 1, "Age": 45, ...}}'</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Citation -->
+  <section class="section section--tight" id="citation">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">10 / Citation</p>
+        <h2>引用</h2>
+      </div>
+      <div class="copy-box">@article{calcualert2026,
+  title={CalcuAlert: A Stacking Ensemble Framework for Urinary Stone Risk Prediction Using Routine Biomarkers},
+  author={...},
+  journal={...},
+  year={2026}
+}</div>
+    </div>
+  </section>
 
 </main>
 
@@ -117,14 +347,7 @@
   </div>
 </div>
 
-<footer class="footer"><div class="container footer__inner"><div>© 2026 CalcuAlert · 四川大学华西医院泌尿外科</div><div class="footer__links"><a href="#shap">核心图像</a><a href="#method">研究设计</a><a href="demo.html">风险计算器</a></div></div></footer>
+<footer class="footer"><div class="container footer__inner"><div>© 2026 CalcuAlert · 四川大学华西医院泌尿外科</div><div class="footer__links"><a href="#highlights">核心发现</a><a href="#architecture">模型架构</a><a href="#results">性能结果</a><a href="#shap">可解释性</a><a href="demo.html">风险计算器</a><a href="https://github.com/duxingx1a/calcu-alert" target="_blank">GitHub</a></div></div></footer>
 <script src="paper-lightbox.js" defer></script>
-<script>
-  if (window.location.protocol === 'file:') {
-    document.querySelectorAll('a[href="demo.html"]').forEach(function (link) {
-      link.href = 'http://8.137.187.63:18051/demo.html';
-    });
-  }
-</script>
 </body>
 </html>

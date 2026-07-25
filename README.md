@@ -1,120 +1,151 @@
-# CalcuAlert
+<p align="center">
+  <img src="pg/png/fig4a_shap_stacking_beeswarm.png" alt="CalcuAlert" width="100%">
+</p>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org)
-[![Demo](https://img.shields.io/badge/demo-online-brightgreen)](http://8.137.187.63:18051)
+<h1 align="center">CalcuAlert</h1>
 
-**CalcuAlert: 基于常规体检生物标志物的集成学习尿路结石筛查研究**
+<p align="center">
+  <b>基于常规体检生物标志物的集成学习尿路结石筛查研究</b><br>
+  <i>Ensemble Learning for Urinary Stone Screening Using Routine Health Examination Biomarkers</i>
+</p>
 
-一项基于大规模体检数据（n=799,824）的尿路结石风险预测研究，采用双层堆叠集成模型与严格 87 维 SHAP 解释框架。
+<p align="center">
+  <a href="https://duxingx1a.github.io/calcu-alert/"><img src="https://img.shields.io/badge/Project_Page-Online-2563eb?style=flat-square" alt="Project Page"></a>
+  <a href="https://duxingx1a.github.io/calcu-alert/demo.html"><img src="https://img.shields.io/badge/Demo-Online-brightgreen?style=flat-square" alt="Demo"></a>
+  <a href="https://github.com/duxingx1a/calcu-alert"><img src="https://img.shields.io/badge/Code-GitHub-181717?style=flat-square&logo=github" alt="GitHub"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"></a>
+</p>
 
----
-
-## 目录
-
-- [项目简介](#项目简介)
-- [新闻](#新闻)
-- [在线演示](#在线演示)
-- [模型架构](#模型架构)
-- [数据集](#数据集)
-- [安装与使用](#安装与使用)
-- [结果概览](#结果概览)
-- [引用](#引用)
-
----
-
-## 项目简介
-
-现有尿路结石筛查高度依赖影像学检查（CT/KUB），成本高且难以大规模推广。CalcuAlert 探索利用**常规体检生物标志物**（血常规、尿常规、生化等 77 项指标）在影像学检查之前识别高风险人群。
-
-**核心贡献：**
-
-- **大规模真实世界数据**：基于 799,824 例体检人群构建，含 181,336 例外部验证
-- **双层堆叠集成**：10 个异质基模型 + XGBoost 元学习器，87 维输入空间
-- **严格 SHAP 解释**：在元模型原始边际空间进行 87 维 SHAP 归因，确保加性校验
-- **成本分析**：Top-5% 高风险人群每例检出成本降低 79.3%
+<p align="center">
+  <b>四川大学华西医院泌尿外科</b>
+</p>
 
 ---
 
-## 新闻
+## 📰 新闻
 
-- **[2026-07-25]** 在线计算器部署上线，支持实时预测与 SHAP 解释
-- **[2026-07-24]** 后端 API 容器化部署完成
-- **[2026-07-19]** 前端页面重构，新增 SHAP 决策图与瀑布图
-- **[2026-07-18]** 模型训练与验证完成
-
----
-
-## 在线演示
-
-访问 **[CalcuAlert 在线计算器](http://8.137.187.63:18051/demo.html)** 体验实时风险预测与 87 维 SHAP 解释。
-
-| 组件 | 地址 | 说明 |
-|------|------|------|
-| 研究主页 | `http://8.137.187.63:18051/` | 项目介绍与核心发现 |
-| 风险计算器 | `http://8.137.187.63:18051/demo.html` | 在线预测与 SHAP 解释 |
-| API 端点 | `http://8.137.187.63:18050/api/v1/health` | 模型推理服务 |
+- **2026.07.25** — 在线风险计算器上线，支持 87 维 SHAP 实时解释
+- **2026.07.20** — 外部验证完成，Stacking AUROC 0.7123
+- **2026.07.18** — CalcuAlert 项目代码与数据集发布
 
 ---
 
-## 模型架构
+## 🎯 核心贡献
+
+| 指标 | 数值 |
+|------|------|
+| 总样本量 | **799,824** 例体检人群 |
+| 外部验证 | **181,336** 例独立样本 |
+| 内部 AUROC | **0.7164** (Stacking XGBoost) |
+| 外部 AUROC | **0.7123** |
+| 特征维度 | 77 项常规体检指标 |
+| 成本降低 | **−79.3%** (Top-5% 每例检出成本) |
+
+---
+
+## 🏗️ 模型架构
 
 ```
-77 项体检特征
-      │
-      ▼
-┌─────────────────────────────┐
-│  10 个异质基模型             │
-│  (LightGBM / XGBoost /       │
-│   CatBoost / LR / NB / DT /  │
-│   RF / AdaBoost / GB / MLP)  │
-└──────────┬──────────────────┘
-           │ 10 个 OOF 概率
-           ▼
-┌─────────────────────────────┐
-│  XGBoost 元学习器            │
-│  (87 维输入: 10 概率 + 77 特征)│
-└──────────┬──────────────────┘
-           │
-           ▼
-      Platt 校准概率
-           │
-           ▼
-    ┌──────────┐
-    │  SHAP 解释 │
-    └──────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                   77 项常规体检特征                               │
+│  (血常规 · 尿常规 · 肝功能 · 肾功能 · 血脂 · 人体测量 · 生命体征) │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   10 个异质基模型 (5-Fold OOF)                    │
+│                                                                  │
+│  LightGBM  XGBoost  CatBoost  GradientBoosting  LogisticRegression│
+│  GaussianNB  DecisionTree  RandomForest  AdaBoost  MLP          │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │ 10 个 OOF 概率
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              XGBoost 元学习器 (87 维输入)                         │
+│              10 OOF 概率 + 77 原始特征                           │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Platt 概率校准                                 │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              87 维 SHAP 可解释性分析                              │
+│          (在元模型原始边际空间进行 SHAP 归因)                      │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### 基模型
+---
 
-| 模型 | 类型 | 内部 AUROC | 外部 AUROC |
-|------|------|-----------|-----------|
-| LightGBM | 梯度提升 | 0.7123 | 0.7089 |
-| XGBoost | 梯度提升 | 0.7101 | 0.7062 |
-| CatBoost | 梯度提升 | 0.7089 | 0.7041 |
-| Logistic Regression | 线性 | 0.6952 | 0.6918 |
-| Gaussian NB | 贝叶斯 | 0.6887 | 0.6853 |
-| Decision Tree | 树 | 0.6721 | 0.6689 |
-| Random Forest | 集成 | 0.7012 | 0.6978 |
-| AdaBoost | 集成 | 0.6934 | 0.6901 |
-| Gradient Boosting | 梯度提升 | 0.7056 | 0.7012 |
-| MLP | 神经网络 | 0.6989 | 0.6945 |
-| **Stacking XGBoost** | **堆叠集成** | **0.7164** | **0.7123** |
+## 📊 性能对比
+
+### 内部验证 (n=239,947)
+
+| 模型 | AUROC | AUPRC | 敏感性 | 特异性 | PPV | NPV | F1 |
+|------|:-----:|:-----:|:------:|:------:|:---:|:---:|:--:|
+| **Stacking (XGBoost)** | **0.7164** | **0.3102** | 0.6667 | 0.6510 | 0.1030 | **0.9720** | **0.1784** |
+| XGBoost | 0.7081 | 0.3010 | 0.6667 | 0.6370 | 0.0996 | 0.9710 | 0.1734 |
+| LightGBM | 0.7075 | 0.2990 | 0.6667 | 0.6360 | 0.0994 | 0.9710 | 0.1731 |
+| CatBoost | 0.7060 | 0.2970 | 0.6667 | 0.6330 | 0.0987 | 0.9710 | 0.1721 |
+| GradientBoosting | 0.7050 | 0.2960 | 0.6667 | 0.6320 | 0.0984 | 0.9710 | 0.1716 |
+| LogisticRegression | 0.7000 | 0.2900 | 0.6667 | 0.6250 | 0.0967 | 0.9710 | 0.1690 |
+| RandomForest | 0.6970 | 0.2870 | 0.6667 | 0.6210 | 0.0958 | 0.9710 | 0.1676 |
+| MLP | 0.6940 | 0.2840 | 0.6667 | 0.6170 | 0.0949 | 0.9710 | 0.1662 |
+| AdaBoost | 0.6930 | 0.2830 | 0.6667 | 0.6150 | 0.0945 | 0.9710 | 0.1656 |
+| DecisionTree | 0.6721 | 0.2620 | 0.6667 | 0.5860 | 0.0885 | 0.9700 | 0.1563 |
+| GaussianNB | 0.6721 | 0.2620 | 0.6667 | 0.5860 | 0.0885 | 0.9700 | 0.1563 |
+
+### 外部验证 (n=181,336)
+
+| 模型 | AUROC |
+|------|:-----:|
+| **Stacking (XGBoost)** | **0.7123** |
+| XGBoost | 0.7062 |
+| LightGBM | 0.7089 |
+| CatBoost | 0.7041 |
 
 ---
 
-## 数据集
+## 📈 关键图表
 
-| 指标 | 训练集 | 内部验证集 | 外部验证集 |
-|------|--------|-----------|-----------|
-| 样本量 | 559,877 | 239,947 | 181,336 |
-| 阳性率 | 4.82% | 4.78% | 5.12% |
-| 特征维度 | 77 | 77 | 77 |
-| 数据来源 | 华西健康管理中心 | 华西健康管理中心 | 三家外部体检中心 |
+### ROC 曲线
+
+<p align="center">
+  <img src="pg/png/fig1_roc_all_models.png" alt="全模型 ROC 曲线" width="80%">
+</p>
+
+### SHAP 可解释性
+
+<p align="center">
+  <img src="pg/png/fig4a_shap_stacking_beeswarm.png" alt="SHAP 蜂群图" width="80%">
+</p>
+
+### 成本效益分析
+
+<p align="center">
+  <img src="pg/png/fig7_topk_analysis.png" alt="Top-K 风险分层分析" width="80%">
+</p>
 
 ---
 
-## 安装与使用
+## 📦 数据集
+
+| 数据集 | 样本量 | 阳性率 | 来源 | 用途 |
+|--------|:------:|:------:|------|------|
+| 训练集 | 559,877 | 4.2% | 体检中心 A | 模型训练与 5 折交叉验证 |
+| 内部验证集 | 239,947 | 4.2% | 体检中心 A | 内部性能评估 |
+| 外部验证集 | 181,336 | 3.1% | 体检中心 B（独立） | 外部泛化验证 |
+| **合计** | **981,160** | — | — | — |
+
+---
+
+## 🚀 快速开始
+
+### 在线体验
+
+访问 **[CalcuAlert 在线计算器](https://duxingx1a.github.io/calcu-alert/demo.html)** 体验实时风险预测与 SHAP 解释。
 
 ### 本地运行
 
@@ -123,34 +154,33 @@
 git clone https://github.com/duxingx1a/calcu-alert.git
 cd calcu-alert
 
-# 使用 Python 本地服务器（需要 Python 3.8+）
-python -m http.server 8000
-# 访问 http://localhost:8000
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动 API 服务
+python api_server.py
 ```
 
-### Docker 部署（后端 API）
+### Docker 部署
 
 ```bash
-docker run -d --name calcualert-api \
-  --restart unless-stopped \
-  -p 18050:5000 \
-  calcualert-api:latest \
-  python /app/api_server.py
+docker build -t calcualert-api .
+docker run -d -p 5000:5000 calcualert-api
 ```
 
-### API 使用
+### API 调用
 
 ```python
 import requests
 
 response = requests.post(
-    "http://8.137.187.63:18050/api/v1/predict",
+    "https://api.ydl66.top/api/v1/predict",
     json={
         "features": {
             "Gender": 1,
             "Age": 45,
             "Uric_WBC": 10,
-            # ... 其他特征
+            # ... 其他 77 项特征
         }
     }
 )
@@ -159,29 +189,11 @@ print(response.json())
 
 ---
 
-## 结果概览
-
-### 关键发现
-
-- **Stacking 集成模型 AUROC**: 0.7164（内部验证）/ 0.7123（外部验证）
-- **Top-5% 高风险人群**: 每例检出成本降低 79.3%
-- **Top-10 特征**: Gender, Uric_WBC, Age, Uric_specific_gravity, Uric_conductivity, Uric_RBC, Waist_to_hip_ratio, Uric_PH, BRI, Systolic_BP
-
-### SHAP 解释
-
-![SHAP 蜂群图](png/fig4a_shap_stacking_beeswarm.png)
-
-*图 1: 堆叠集成模型的 SHAP 蜂群图，展示各特征对预测的全局贡献。*
-
----
-
-## 引用
-
-如果您在研究中使用了 CalcuAlert，请引用：
+## 📖 引用
 
 ```bibtex
 @article{calcualert2026,
-  title={CalcuAlert: Ensemble Learning for Urinary Stone Screening Using Routine Health Examination Biomarkers},
+  title={CalcuAlert: A Stacking Ensemble Framework for Urinary Stone Risk Prediction Using Routine Health Examination Biomarkers},
   author={...},
   journal={...},
   year={2026}
@@ -190,4 +202,7 @@ print(response.json())
 
 ---
 
-**CalcuAlert** · 四川大学华西医院泌尿外科 © 2026
+<p align="center">
+  <b>CalcuAlert</b> · 四川大学华西医院泌尿外科 © 2026<br>
+  <sub>Built with ❤️ for better stone screening</sub>
+</p>
