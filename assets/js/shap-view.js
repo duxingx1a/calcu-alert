@@ -91,12 +91,23 @@ function renderTable(result) {
 
 /* ========== SHAP Force Plot（单样本标准红蓝推力图） ========== */
 function renderForcePlot(result) {
-  // 使用父容器宽度实现自适应
   const canvas = document.querySelector('#forcePlot');
   const wrap = canvas.closest('.chart-wrap');
   if (!wrap) return;
-  const cw = wrap.clientWidth - 2;   // 减去 border
-  const { c, w, h } = ctx('forcePlot', Math.max(cw, 280), 130);
+
+  // 用 getBoundingClientRect 强制同步布局（解决 hidden→visible 时 clientWidth=0 的问题）
+  const rect = wrap.getBoundingClientRect();
+  const w = Math.max(rect.width - 2, 280);
+  const h = 130;
+  const r = window.devicePixelRatio || 1;
+
+  canvas.width = w * r;
+  canvas.height = h * r;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const c = canvas.getContext('2d');
+  c.setTransform(r, 0, 0, r, 0, 0);  // 重置 transform 并设备倍率缩放
   const items = [...result.shap.contributions]
     .sort((a, b) => a.shap_value - b.shap_value); // 负→正
   if (!items.length) return;

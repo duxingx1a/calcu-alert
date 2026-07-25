@@ -1,6 +1,6 @@
-import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250739';
-import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250739';
-import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250739';
+import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250740';
+import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250740';
+import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250740';
 
 let metadata;
 let busy = false;
@@ -19,9 +19,9 @@ function setBusy(value) {
 }
 
 function highlightSample(index) {
-  document.querySelectorAll('.sample-card').forEach((btn, i) => {
-    btn.classList.toggle('active', i === index);
-  });
+  document.querySelectorAll('.sample-card').forEach(btn => btn.classList.remove('active'));
+  const target = document.querySelector(`.sample-card[data-sample="${index}"]`);
+  if (target) target.classList.add('active');
 }
 
 async function initialise() {
