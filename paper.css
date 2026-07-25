@@ -81,11 +81,6 @@ button { cursor: pointer; font: inherit; }
   font-size: 10px; color: rgba(0,0,0,.3); letter-spacing: 1px;
 }
 
-/* --- News Timeline --- */
-.news-timeline { display: flex; gap: 24px; flex-wrap: wrap; }
-.news-item { font-size: 13px; color: #4b5563; display: flex; align-items: center; gap: 8px; }
-.news-date { font-size: 11px; font-weight: 600; color: #315c4d; white-space: nowrap; }
-
 /* --- Metrics --- */
 .metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
 .metric {
@@ -181,6 +176,5 @@ button { cursor: pointer; font: inherit; }
   .pipeline__row { flex-direction: column; }
   .pipeline__arrow { transform: rotate(90deg); }
   .nav-links { display: none; }
-  .news-timeline { flex-direction: column; gap: 8px; }
   .footer__inner { flex-direction: column; gap: 8px; }
 }
