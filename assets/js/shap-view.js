@@ -22,21 +22,23 @@ export function toggleResultPanel(show) {
 
 /* ---------- 核心：渲染预测结果 ---------- */
 export function renderPrediction(result) {
+  const isPos = result.classification === '阳性';
   /* 概要 */
   document.querySelector('#resultSummary').innerHTML = `
-    <div class="result-card">
-      <p><strong>患病概率</strong><br><span class="prob-big">${(result.probability * 100).toFixed(2)}%</span></p>
-      <p class="badge ${result.classification === '阳性' ? 'pos' : 'neg'}">判定: ${result.classification === '阳性' ? '高风险' : '低风险'}</p>
-      <p class="threshold-note">阈值: ${(result.threshold * 100).toFixed(1)}%</p>
+    <div class="result-card${isPos ? ' positive' : ''}">
+      <strong>患病概率</strong>
+      <span class="prob-big">${(result.probability * 100).toFixed(1)}%</span>
+      <span class="badge ${isPos ? 'pos' : 'neg'}">${result.classification}</span>
+      <span class="threshold-note">阈值: ${(result.threshold * 100).toFixed(1)}%</span>
     </div>`;
 
   /* 基模型概率 */
   const baseHtml = (result.base_model_probabilities || [])
     .map((p, i) =>
       `<div class="prob-cell">
-        <div class="prob-label">${(result.base_model_order || [])[i] || `M${i}`}</div>
-        <div class="prob-bar"><div class="prob-fill" style="width:${(p * 100).toFixed(0)}%"></div></div>
-        <div class="prob-val">${(p * 100).toFixed(2)}%</div>
+        <span class="prob-label">${(result.base_model_order || [])[i] || `M${i}`}</span>
+        <div class="prob-bar"><div class="prob-fill" style="width:${(p * 100).toFixed(0)}%;background:${p >= 0.5281 ? 'var(--red)' : 'var(--blue)'}"></div></div>
+        <span class="prob-val">${(p * 100).toFixed(1)}%</span>
       </div>`)
     .join('');
   document.querySelector('#baseProbabilities').innerHTML = baseHtml;
@@ -82,22 +84,6 @@ export function renderPrediction(result) {
 function renderShapImages(result) {
   const images = result.shap_images || {};
 
-  // Force Plot
-  const forceImg = document.querySelector('#forcePlotImg');
-  if (forceImg) {
-    if (images.force_plot) {
-      forceImg.src = images.force_plot;
-      forceImg.style.display = 'block';
-      forceImg.onerror = () => {
-        forceImg.style.display = 'none';
-        console.warn('Force Plot 图片加载失败');
-      };
-    } else {
-      forceImg.style.display = 'none';
-      console.warn('后端未返回 Force Plot 图片');
-    }
-  }
-
   // Waterfall
   const wfImg = document.querySelector('#waterfallPlotImg');
   if (wfImg) {
@@ -125,8 +111,6 @@ export function clearResult() {
   document.querySelector('#shapTableBody').innerHTML = '';
 
   // 清除图片
-  const forceImg = document.querySelector('#forcePlotImg');
-  if (forceImg) { forceImg.src = ''; forceImg.style.display = 'none'; }
   const wfImg = document.querySelector('#waterfallPlotImg');
   if (wfImg) { wfImg.src = ''; wfImg.style.display = 'none'; }
 }

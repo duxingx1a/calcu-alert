@@ -24,18 +24,40 @@ h1 { margin:6px 0 4px; font:600 clamp(2rem,4vw,3.6rem)/1.05 var(--serif); letter
 .field-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px 14px; margin-top:14px; }.field { min-width:0; }.field label { display:flex; align-items:baseline; gap:5px; min-height:22px; font-size:12px; }.field label b { color:var(--red); font:600 9px var(--mono); }.field label span { color:var(--muted); font-size:10px; }.field label small { margin-left:auto; color:#82928a; font-size:10px; }.field input,.field select { width:100%; min-height:36px; padding:5px 8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:2px; font-size:12px; }.field input:focus,.field select:focus { outline:2px solid rgba(49,92,77,.2); border-color:var(--blue); }.field.invalid input,.field.invalid select { border-color:var(--red); background:var(--red-soft); }.field-error { min-height:12px; margin:2px 0 0; color:var(--red); font-size:10px; }
 .optional-section { border-top:1px solid var(--line); margin-top:11px; padding-top:2px; }.section-toggle { width:100%; display:flex; justify-content:space-between; border:0; background:none; color:var(--blue); padding:8px 0; text-align:left; font-weight:600; font-size:12px; }.section-toggle span:last-child { color:var(--muted); font:10px var(--mono); }.optional-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px 14px; padding-bottom:6px; }
 .actions { display:flex; gap:10px; align-items:center; margin-top:14px; }.primary,.secondary { border:1px solid var(--blue); padding:9px 16px; border-radius:999px; font:600 12px var(--sans); }.primary { background:var(--blue); color:white; }.primary:hover { background:#173e35; }.primary:disabled { opacity:.55; cursor:wait; }.secondary { background:var(--paper-strong); color:var(--blue); }.disclaimer { color:var(--muted); font-size:11px; margin:11px 0 0; }
-.result-summary { display:block; }.result-top-row { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto; gap:14px; margin-bottom:16px; }
-.result-top-row .prob-panel { grid-row:span 2; border-top:0; padding-top:0; margin-top:0; }
-.result-top-row .force-plot-panel { border-top:0; padding-top:0; margin-top:0; }.result-lead { padding:18px; border-left:5px solid var(--blue); background:var(--blue-soft); }.result-lead.positive { border-color:var(--red); background:var(--red-soft); }.result-lead strong { display:block; font:500 34px/1.15 var(--mono); margin:4px 0; }.result-lead span { color:var(--muted); font-size:13px; }.result-note { margin:14px 0; padding:10px 12px; color:var(--muted); background:var(--wash); font-size:13px; }.subpanel { border-top:2px solid var(--ink); padding-top:11px; margin-top:18px; }.subpanel h3 { margin:0 0 10px; font:600 16px var(--serif); }
-/* 概率水平条形图 */
+/* ---- 患病概率卡片 ---- */
+.result-summary { display:block; }
+.result-card { padding:18px 20px; border-left:5px solid var(--blue); background:var(--blue-soft); }
+.result-card.positive { border-color:var(--red); background:var(--red-soft); }
+.result-card strong { display:block; font:600 14px var(--serif); color:var(--muted); margin-bottom:2px; }
+.prob-big { display:block; font:600 36px/1.2 var(--mono); color:var(--ink); }
+.badge { display:inline-block; padding:3px 14px; border-radius:999px; font:600 12px var(--sans); margin-top:4px; }
+.badge.pos { background:var(--red-soft); color:var(--red); }
+.badge.neg { background:var(--blue-soft); color:var(--blue); }
+.threshold-note { display:block; color:var(--muted); font-size:12px; margin-top:6px; }
+
+.result-top-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+.result-top-row .prob-panel { border-top:0; padding-top:0; margin-top:0; }
+.result-lead { padding:18px; border-left:5px solid var(--blue); background:var(--blue-soft); }
+.result-lead.positive { border-color:var(--red); background:var(--red-soft); }
+.result-lead strong { display:block; font:500 34px/1.15 var(--mono); margin:4px 0; }
+.result-lead span { color:var(--muted); font-size:13px; }
+.result-note { margin:14px 0; padding:10px 12px; color:var(--muted); background:var(--wash); font-size:13px; }
+.subpanel { border-top:2px solid var(--ink); padding-top:11px; margin-top:18px; }
+.subpanel h3 { margin:0 0 10px; font:600 16px var(--serif); }
+
+/* ---- 各模型阳性概率条形图 ---- */
 .prob-panel { margin-top:0; }
-.prob-grid { display:flex; flex-direction:column; gap:2px; }
-.prob-row { display:grid; grid-template-columns:100px 1fr 48px; align-items:center; gap:6px; padding:1px 0; }
+.prob-grid { display:flex; flex-direction:column; gap:3px; }
+.prob-cell { display:grid; grid-template-columns:100px 1fr 52px; align-items:center; gap:6px; padding:2px 0; }
 .prob-label { font-size:11px; color:var(--ink); text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.prob-bar-track { width:100%; height:11px; background:#eef1f0; border-radius:6px; overflow:hidden; }
-.prob-bar-fill { height:100%; border-radius:6px; transition:width .35s ease; }
+.prob-bar { width:100%; height:12px; background:#eef1f0; border-radius:6px; overflow:hidden; }
+.prob-fill { height:100%; border-radius:6px; transition:width .45s ease; }
 .prob-val { font:600 11px var(--mono); color:var(--ink); text-align:left; }
-/* 图表 */
+
+/* ---- 瀑布图尺寸 ---- */
+#waterfallPlotImg { max-width:700px; width:100%; margin:0 auto; }
+
+/* ---- 图表通用 ---- */
 .chart-wrap,.chart-wrap-image { overflow:auto; border:1px solid var(--line); background:#fbfcfd; text-align:center; }
 .chart { display:block; width:100%; min-height:400px; min-width:700px; }
 .chart-img { display:block; max-width:100%; height:auto; margin:0 auto; }
