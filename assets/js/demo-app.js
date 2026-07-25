@@ -4,6 +4,8 @@ import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js
 
 let metadata;
 let busy = false;
+let currentExampleLabel = null;
+let exampleModified = false;
 
 function setStatus(ok, text) {
   const dot = document.querySelector('#apiDot');
@@ -48,15 +50,20 @@ async function initialise() {
         const idx = Number(button.dataset.sample);
         fillValues(metadata, examples[idx].values);
         highlightSample(idx);
+        currentExampleLabel = examples[idx].label ?? null;
+        exampleModified = false;
       });
     });
     document.querySelector('#calculatorForm').addEventListener('submit', submitForm);
-    document.querySelector('#resetButton').addEventListener('click', () => { document.querySelector('#calculatorForm').reset(); clearResult(); });
+    document.querySelector('#calculatorForm').addEventListener('input', () => { exampleModified = true; });
+    document.querySelector('#calculatorForm').addEventListener('change', () => { exampleModified = true; });
+    document.querySelector('#resetButton').addEventListener('click', () => { document.querySelector('#calculatorForm').reset(); clearResult(); currentExampleLabel = null; exampleModified = false; });
     document.querySelector('#toggleResult').addEventListener('click', toggleResultPanel);
 
     // 默认填充病例 #1 并高亮
     fillValues(metadata, examples[0].values);
     highlightSample(0);
+    currentExampleLabel = examples[0].label ?? null;
 
     // 滚动到计算按钮区域，让用户一进来就能计算
     document.querySelector('.quickbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -75,7 +82,7 @@ async function submitForm(event) {
   }
   setBusy(true); clearResult();
   try {
-    renderPrediction(await predict(values));
+    renderPrediction(await predict(values), exampleModified ? null : currentExampleLabel);
     collapseAllSections();
   } catch (error) {
     document.querySelector('#resultSummary').innerHTML = `<div class="error-box">${error.message}</div>`;

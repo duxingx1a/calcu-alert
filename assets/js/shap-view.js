@@ -38,16 +38,20 @@ export function toggleResultPanel(show) {
 }
 
 /* ---------- 核心：渲染预测结果 ---------- */
-export function renderPrediction(result) {
+export function renderPrediction(result, realLabel) {
   const isPos = result.classification === '阳性';
   const classificationEn = isPos ? 'Positive' : 'Negative';
   /* 概要 */
+  const labelHtml = (realLabel !== null && realLabel !== undefined)
+    ? `<span class="real-label">Actual: ${realLabel === 1 ? 'Stone (Positive)' : 'No Stone (Negative)'}</span>`
+    : '';
   document.querySelector('#resultSummary').innerHTML = `
     <div class="result-card${isPos ? ' positive' : ''}">
       <strong>Disease Probability</strong>
       <span class="prob-big">${(result.probability * 100).toFixed(1)}%</span>
       <span class="badge ${isPos ? 'pos' : 'neg'}">${classificationEn}</span>
       <span class="threshold-note">Threshold: ${(result.threshold * 100).toFixed(1)}%</span>
+      ${labelHtml}
     </div>`;
 
   /* 基模型概率 */
