@@ -37,7 +37,7 @@ export function renderPrediction(result) {
     .map((p, i) =>
       `<div class="prob-cell">
         <span class="prob-label">${(result.base_model_order || [])[i] || `M${i}`}</span>
-        <div class="prob-bar"><div class="prob-fill" style="width:${(p * 100).toFixed(0)}%;background:${p >= 0.5281 ? 'var(--red)' : 'var(--blue)'}"></div></div>
+        <div class="prob-bar"><div class="prob-fill" style="width:${(p * 100).toFixed(0)}%;background:${p >= 0.5281 ? SHAP_RED : SHAP_BLUE}"></div></div>
         <span class="prob-val">${(p * 100).toFixed(1)}%</span>
       </div>`)
     .join('');

@@ -13,7 +13,7 @@ const LABELS = {
   Age: ['年龄', '岁', 'number'], Uric_specific_gravity: ['尿比重', '', 'number'],
   Uric_conductivity: ['尿电导率', 'mS/cm', 'number'], Uric_RBC: ['尿红细胞', '/μL', 'number'],
   Waist_to_hip_ratio: ['腰臀比', '', 'number'], Uric_PH: ['尿液 pH', '', 'number'],
-  BRI: ['身体圆度指数', '', 'number'], Systolic_BP: ['收缩压', 'mmHg', 'number'],
+  BRI: ['BRI', '', 'number'], Systolic_BP: ['收缩压', 'mmHg', 'number'],
   Uric_bacteria: ['尿细菌', '/μL', 'number'], Uric_epithelium: ['尿上皮细胞', '/μL', 'number'],
   RBC: ['红细胞计数', '×10¹²/L', 'number'], MCV: ['平均红细胞体积', 'fL', 'number'],
   HCT: ['血细胞比容', 'L/L', 'number'], 'RDW(CV)': ['RDW-CV', '%', 'number'],
@@ -133,7 +133,11 @@ function fillValues(metadata, values) {
   metadata.features.forEach((definition, index) => {
     if (!(definition.key in values)) return;
     const element = document.querySelector(`#feature-${index}`);
-    if (element) element.value = values[definition.key];
+    if (!element) return;
+    const v = values[definition.key];
+    // 分类字段用原值，数值字段截 3 位小数
+    const isCategory = CATEGORY_OPTIONS[definition.key];
+    element.value = isCategory ? v : Number(v).toFixed(3);
   });
 }
 
