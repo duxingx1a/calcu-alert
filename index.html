@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="CalcuAlert：基于常规体检生物标志物的集成学习尿路结石筛查研究。799,824 样本，双层堆叠集成，87 维 SHAP 可解释性。">
-<meta name="keywords" content="尿路结石, 机器学习, 堆叠集成, SHAP, 风险预测, 体检数据">
-<title>CalcuAlert · 基于常规体检的尿路结石风险预测</title>
+<meta name="description" content="Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study. 799,824 samples; stacked ensemble; SHAP explainability; multicentre validation.">
+<meta name="keywords" content="urolithiasis, machine learning, ensemble learning, stacked generalization, SHAP, risk prediction, routine health check-up, non-imaging biomarkers">
+<title>Urolithiasis Screening · Ensemble Learning with Non-imaging Biomarkers</title>
 <link rel="stylesheet" href="paper.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
 </head>
@@ -13,14 +13,14 @@
 
 <header class="site-nav">
   <div class="site-nav__inner">
-    <a class="brand" href="index.html" aria-label="Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers">
+    <a class="brand" href="index.html" aria-label="Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study">
       <span class="brand__mark" aria-hidden="true"></span>
       <span><span class="brand__name">Urolithiasis Screening</span><span class="brand__sub">Ensemble Learning · Non-imaging Biomarkers</span></span>
     </a>
-    <nav class="nav-links" aria-label="主导航">
-      <a href="#highlights">核心发现</a>
-      <a href="#shap">可解释性</a>
-      <a class="nav-cta" href="demo.html">在线计算器 ↗</a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#highlights">Highlights</a>
+      <a href="#shap">Explainability</a>
+      <a class="nav-cta" href="demo.html">Risk Calculator ↗</a>
     </nav>
   </div>
 </header>
@@ -31,38 +31,38 @@
     <div class="container hero__grid">
       <div>
         <p class="eyebrow">Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study</p>
-        <h1 class="hero__title">基于常规体检生物标志物的<br>集成学习尿路结石筛查研究</h1>
-        <p class="hero__lede">一项基于 799,824 例常规体检生物标志物的集成学习研究，探索如何在影像学检查之前识别尿路结石高风险人群。</p>
+        <h1 class="hero__title">Population-scale Screening for Urolithiasis<br>Using Ensemble Learning with Non-imaging Biomarkers</h1>
+        <p class="hero__lede">A multicentre retrospective study leveraging 799,824 routine health check-up records to identify high-risk individuals before imaging — using stacked ensemble learning and SHAP-driven explainability.</p>
         <div class="hero__actions">
-          <a class="button button--primary" href="#highlights">查看核心发现 ↓</a>
-          <a class="button button--ghost" href="demo.html">试用风险计算器 ↗</a>
+          <a class="button button--primary" href="#highlights">Key Findings ↓</a>
+          <a class="button button--ghost" href="demo.html">Risk Calculator ↗</a>
           <a class="button button--ghost" href="https://github.com/duxingx1a/calcu-alert" target="_blank">GitHub ↗</a>
         </div>
-        <div class="hero__note"><span class="status-dot" aria-hidden="true"></span> 中文预览版 · 研究资料与可解释性结果</div>
+        <div class="hero__note"><span class="status-dot" aria-hidden="true"></span> Research Preview · Explainability & External Validation</div>
       </div>
-      <div class="hero-visual" aria-label="SHAP 特征贡献预览图">
+      <div class="hero-visual" aria-label="SHAP feature contribution preview">
         <div class="hero-visual__frame">
-          <img class="hero-visual__image" src="png/fig4a_shap_stacking_beeswarm.png" alt="SHAP 蜂群图，展示模型特征对尿路结石风险预测的贡献">
+          <img class="hero-visual__image" src="png/fig4a_shap_stacking_beeswarm.png" alt="SHAP beeswarm plot showing feature contributions to urolithiasis risk prediction">
           <div class="hero-visual__wash"></div>
         </div>
-        <div class="hero-visual__tag"><strong>SHAP / 01</strong>哪些体检指标正在改变风险判断？</div>
-        <div class="hero-visual__index">CALCUALERT · 2026</div>
+        <div class="hero-visual__tag"><strong>SHAP / 01</strong> Which routine biomarkers are driving the risk?</div>
+        <div class="hero-visual__index">UROLITHIASIS SCREENING · 2026</div>
       </div>
     </div>
   </section>
 
   <!-- Key Metrics -->
-  <section class="section section--tight" id="highlights" aria-label="研究关键指标">
+  <section class="section section--tight" id="highlights" aria-label="Key research metrics">
     <div class="container">
       <div class="section-heading">
         <p class="eyebrow">01 / Highlights</p>
-        <h2>核心发现</h2>
+        <h2>Core Findings</h2>
       </div>
       <div class="metrics">
-        <div class="metric"><div class="metric__value">799,824</div><div class="metric__label">总样本量 · 体检人群</div><div class="metric__desc">来自真实世界体检中心，覆盖广泛人群</div></div>
-        <div class="metric"><div class="metric__value">0.7164</div><div class="metric__label">内部验证 AUROC</div><div class="metric__desc">Stacking XGBoost 集成模型</div></div>
-        <div class="metric"><div class="metric__value">181,336</div><div class="metric__label">外部验证样本</div><div class="metric__desc">独立外部数据集验证</div></div>
-        <div class="metric"><div class="metric__value">−79.3%</div><div class="metric__label">Top-5% 每例检出成本</div><div class="metric__desc">相比随机筛查的成本降低</div></div>
+        <div class="metric"><div class="metric__value">799,824</div><div class="metric__label">Total Sample · Health Check-up Cohort</div><div class="metric__desc">Real-world data from routine health examination centres</div></div>
+        <div class="metric"><div class="metric__value">0.7164</div><div class="metric__label">Internal Validation AUROC</div><div class="metric__desc">Stacking XGBoost ensemble model</div></div>
+        <div class="metric"><div class="metric__value">181,336</div><div class="metric__label">External Validation Sample</div><div class="metric__desc">Independent multicentre external validation</div></div>
+        <div class="metric"><div class="metric__value">−79.3%</div><div class="metric__label">Cost per Case Detected (Top-5%)</div><div class="metric__desc">Cost reduction vs. random screening</div></div>
       </div>
     </div>
   </section>
@@ -72,19 +72,19 @@
     <div class="container">
       <div class="section-heading">
         <p class="eyebrow">02 / Explainability</p>
-        <h2>模型可解释性</h2>
-        <p>SHAP (SHapley Additive exPlanations) 揭示每个特征对个体预测的贡献方向与幅度，确保模型决策透明可审计。</p>
+        <h2>Model Explainability</h2>
+        <p>SHAP (SHapley Additive exPlanations) reveals the direction and magnitude of each feature's contribution to individual predictions, ensuring transparent and auditable model decisions.</p>
       </div>
       <div class="figure-grid figure-grid--shap">
         <article class="figure-card figure-card--featured shap-card--main">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 03 · Global explanation</div><h3>全局特征贡献：风险不是黑箱</h3></div></div>
-          <div class="figure-card__media" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP 蜂群图：堆叠集成模型的全局特征贡献"><img class="figure-card__image figure-card__image--shrink" src="png/fig4a_shap_stacking_beeswarm.png" alt="堆叠集成模型 SHAP 蜂群图" loading="lazy"></div>
-          <p class="figure-card__caption">点击图片可放大查看。SHAP 蜂群图展示每个特征对个体预测的方向与幅度，颜色编码原始特征值。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 03 · Global explanation</div><h3>Global Feature Contributions: Risk is not a black box</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP beeswarm plot: global feature contributions of the stacking ensemble model"><img class="figure-card__image figure-card__image--shrink" src="png/fig4a_shap_stacking_beeswarm.png" alt="Stacking ensemble SHAP beeswarm plot" loading="lazy"></div>
+          <p class="figure-card__caption">Click to enlarge. SHAP beeswarm plot showing direction and magnitude of each feature's contribution, colour-coded by raw feature value.</p>
         </article>
         <article class="figure-card figure-card--featured shap-card--dependence">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 04 · Non-linearity</div><h3>关键变量的非线性效应</h3></div></div>
-          <div class="figure-card__media" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP 特征依赖图：关键变量的非线性效应"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP 特征依赖图" loading="lazy"></div>
-          <p class="figure-card__caption">点击图片可放大查看。依赖图进一步观察单个体检指标与预测风险之间的变化关系，揭示非线性模式。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 04 · Non-linearity</div><h3>Non-linear Effects of Key Variables</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP dependence plot: non-linear effects of key variables"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP dependence plot" loading="lazy"></div>
+          <p class="figure-card__caption">Click to enlarge. Dependence plots reveal non-linear relationships between individual biomarkers and predicted risk.</p>
         </article>
       </div>
     </div>
@@ -95,24 +95,24 @@
     <div class="container">
       <div class="section-heading">
         <p class="eyebrow">03 / External Validation</p>
-        <h2>外部验证</h2>
-        <p>在 181,336 例独立外部验证集上评估模型的泛化能力。</p>
+        <h2>External Validation</h2>
+        <p>Generalisation performance evaluated on 181,336 independent external validation samples.</p>
       </div>
       <div class="figure-grid figure-grid--wide">
         <article class="figure-card">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 12</div><h3>外部验证 ROC</h3></div></div>
-          <div class="figure-card__media" data-lightbox="png/fig_ext_validation_roc.png" data-caption="外部验证 ROC 曲线"><img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="外部验证 ROC 曲线" loading="lazy"></div>
-          <p class="figure-card__caption">点击图片可放大查看。外部验证集上 Stacking XGBoost 的 ROC 曲线，AUROC 0.7123。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure 12</div><h3>External Validation ROC</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/fig_ext_validation_roc.png" data-caption="External validation ROC curves"><img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="External validation ROC curve" loading="lazy"></div>
+          <p class="figure-card__caption">Click to enlarge. ROC curve of Stacking XGBoost on the external validation set, AUROC 0.7123.</p>
         </article>
         <article class="figure-card">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S1</div><h3>特征相关性热力图</h3></div></div>
-          <div class="figure-card__media" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="特征相关性热力图"><img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="特征相关性热力图" loading="lazy"></div>
-          <p class="figure-card__caption">点击图片可放大查看。77 项输入特征之间的相关性热力图。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S1</div><h3>Feature Correlation Heatmap</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="Feature correlation heatmap"><img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="Feature correlation heatmap" loading="lazy"></div>
+          <p class="figure-card__caption">Click to enlarge. Correlation heatmap across 77 input features.</p>
         </article>
         <article class="figure-card">
-          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S3</div><h3>概率密度分布</h3></div></div>
-          <div class="figure-card__media" data-lightbox="png/figS3_probability_density.png" data-caption="概率密度分布"><img class="figure-card__image" src="png/figS3_probability_density.png" alt="概率密度分布" loading="lazy"></div>
-          <p class="figure-card__caption">点击图片可放大查看。阳性与阴性样本的模型输出概率密度分布对比。</p>
+          <div class="figure-card__head"><div><div class="figure-card__kicker">Figure S3</div><h3>Probability Density Distribution</h3></div></div>
+          <div class="figure-card__media" data-lightbox="png/figS3_probability_density.png" data-caption="Probability density distribution"><img class="figure-card__image" src="png/figS3_probability_density.png" alt="Probability density distribution" loading="lazy"></div>
+          <p class="figure-card__caption">Click to enlarge. Comparison of model output probability density between positive and negative samples.</p>
         </article>
       </div>
     </div>
@@ -132,18 +132,18 @@
     <div class="pswp__ui pswp__ui--hidden">
       <div class="pswp__top-bar">
         <div class="pswp__counter"></div>
-        <button class="pswp__button pswp__button--close" title="关闭 (Esc)"></button>
-        <button class="pswp__button pswp__button--zoom" title="放大/缩小"></button>
+        <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
         <div class="pswp__preloader"><div class="pswp__preloader__icn"><div class="pswp__preloader__cut"><div class="pswp__preloader__donut"></div></div></div></div>
       </div>
-      <button class="pswp__button pswp__button--arrow--left" title="上一张"></button>
-      <button class="pswp__button pswp__button--arrow--right" title="下一张"></button>
+      <button class="pswp__button pswp__button--arrow--left" title="Previous"></button>
+      <button class="pswp__button pswp__button--arrow--right" title="Next"></button>
       <div class="pswp__caption"><div class="pswp__caption__center"></div></div>
     </div>
   </div>
 </div>
 
-<footer class="footer"><div class="container footer__inner"><div>© 2026 CalcuAlert · 四川大学华西医院泌尿外科</div><div class="footer__links"><a href="#highlights">核心发现</a><a href="#shap">可解释性</a><a href="demo.html">风险计算器</a><a href="https://github.com/duxingx1a/calcu-alert" target="_blank">GitHub</a></div></div></footer>
+<footer class="footer"><div class="container footer__inner"><div>© 2026 Urolithiasis Screening Study · West China Hospital, Sichuan University</div><div class="footer__links"><a href="#highlights">Highlights</a><a href="#shap">Explainability</a><a href="demo.html">Risk Calculator</a><a href="https://github.com/duxingx1a/calcu-alert" target="_blank">GitHub</a></div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/umd/photoswipe.umd.min.js" defer></script>
 <script src="paper-lightbox.js" defer></script>
 </body>
