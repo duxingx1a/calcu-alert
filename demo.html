@@ -1,39 +1,39 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CalcuAlert · 尿路结石风险计算与个体解释</title>
-  <meta name="description" content="基于真实十模型堆叠推理与严格87维SHAP解释的尿路结石科研风险计算器">
+  <title>CalcuAlert · Urolithiasis Risk Calculator</title>
+  <meta name="description" content="Multi-model ensemble urolithiasis risk calculator with strict 87-dimensional SHAP explanation">
   <link rel="stylesheet" href="assets/css/calculator.css?v=250747">
 </head>
 <body>
   <main class="page">
     <header class="masthead">
-      <div><div class="kicker">在线风险计算器</div><h1>尿路结石风险计算与个体解释</h1><p class="subtitle">CalcuAlert · 基于多模型集成的尿路结石患病风险在线评估</p></div>
-      <a class="back-link" href="index.html">返回研究主页</a>
+      <div><h1>CalcuAlert</h1><p class="subtitle">Multi-Model Ensemble Urolithiasis Risk Calculator</p></div>
+      <a class="back-link" href="index.html">Back to Research</a>
     </header>
 
-    <section class="intro" aria-label="模型说明">
+    <section class="intro" aria-label="Model description">
     </section>
 
-    <div class="status" role="status"><span id="apiDot" class="status-dot"></span><span id="apiText">正在核验模型工件…</span></div>
-    <section class="quickbar"><div><span class="quickbar-label">示例病例</span><div id="samples" class="samples" aria-label="示例输入"></div></div><div class="quick-actions"><button id="calculateButton" class="primary" type="submit" form="calculatorForm">计算风险并解释</button><button id="resetButton" class="secondary" type="button">清空</button></div></section>
+    <div class="status" role="status"><span id="apiDot" class="status-dot"></span><span id="apiText">Verifying model artifacts…</span></div>
+    <section class="quickbar"><div><span class="quickbar-label">Example Cases</span><div id="samples" class="samples" aria-label="Example cases"></div></div><div class="quick-actions"><button id="calculateButton" class="primary" type="submit" form="calculatorForm">Calculate Risk &amp; Explain</button><button id="resetButton" class="secondary" type="button">Clear</button></div></section>
 
     <form id="calculatorForm" novalidate>
-      <section class="panel"><div class="panel-header"><h2>主要特征（必填）</h2></div><div id="requiredFields" class="field-grid"></div></section>
-      <section class="panel"><div class="panel-header"><h2>临床特征（选填）</h2></div><div id="optionalFields"></div></section>
-      <p class="disclaimer">本工具用于科研演示和模型复现，不构成诊断、治疗建议或临床决策依据。请勿输入可识别患者身份的信息。</p>
+      <section class="panel"><div class="panel-header"><h2>Key Features (Required)</h2></div><div id="requiredFields" class="field-grid"></div></section>
+      <section class="panel"><div class="panel-header"><h2>Clinical Features (Optional)</h2></div><div id="optionalFields"></div></section>
+      <p class="disclaimer">This tool is for research demonstration and model reproducibility. It does not constitute diagnosis, treatment advice, or clinical decision support. Do not enter patient-identifiable information.</p>
     </form>
 
     <section id="resultPanel" class="panel result-panel" aria-live="polite" style="display:none">
-      <div class="panel-header"><h2>三、计算结果</h2><small id="featureCount"></small></div>
-      <div class="result-top-row"><div id="resultSummary" class="result-summary"></div><article class="subpanel prob-panel"><h3>各模型阳性概率</h3><div id="baseProbabilities" class="prob-grid"></div></article></div>
+      <div class="panel-header"><h2>Results</h2><small id="featureCount"></small></div>
+      <div class="result-top-row"><div id="resultSummary" class="result-summary"></div><article class="subpanel prob-panel"><h3>Model Positive Probabilities</h3><div id="baseProbabilities" class="prob-grid"></div></article></div>
       <p id="imputationNote" class="result-note"></p>
-      <article class="subpanel"><h3>SHAP 瀑布图</h3><div class="chart-wrap-image"><img id="waterfallPlotImg" class="chart-img" alt="SHAP瀑布图" style="display:none"></div></article>
-      <article class="subpanel"><h3>完整贡献数据</h3><div class="table-wrap"><table class="shap-table"><thead><tr><th>秩</th><th>输入项</th><th>类型</th><th>填入值</th><th>SHAP</th></tr></thead><tbody id="shapTableBody"></tbody></table></div></article>
+      <article class="subpanel"><h3>SHAP Waterfall Plot</h3><div class="chart-wrap-image"><img id="waterfallPlotImg" class="chart-img" alt="SHAP Waterfall Plot" style="display:none"></div></article>
+      <article class="subpanel"><h3>Full Contribution Data</h3><div class="table-wrap"><table class="shap-table"><thead><tr><th>Rank</th><th>Feature</th><th>Type</th><th>Value</th><th>SHAP</th></tr></thead><tbody id="shapTableBody"></tbody></table></div></article>
     </section>
-    <div id="resultToggleBar" class="actions" style="display:none;text-align:center;margin-top:14px"><button id="toggleResult" class="secondary" type="button">收起结果</button></div>
+    <div id="resultToggleBar" class="actions" style="display:none;text-align:center;margin-top:14px"><button id="toggleResult" class="secondary" type="button">Collapse Results</button></div>
   </main>
   <script type="module" src="assets/js/demo-app.js?v=250747"></script>
 </body>

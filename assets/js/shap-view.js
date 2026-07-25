@@ -33,20 +33,21 @@ export function toggleResultPanel(show) {
   }
 
   if (btn) {
-    btn.textContent = show ? '收起结果' : '展开结果';
+    btn.textContent = show ? 'Collapse Results' : 'Expand Results';
   }
 }
 
 /* ---------- 核心：渲染预测结果 ---------- */
 export function renderPrediction(result) {
   const isPos = result.classification === '阳性';
+  const classificationEn = isPos ? 'Positive' : 'Negative';
   /* 概要 */
   document.querySelector('#resultSummary').innerHTML = `
     <div class="result-card${isPos ? ' positive' : ''}">
-      <strong>患病概率</strong>
+      <strong>Disease Probability</strong>
       <span class="prob-big">${(result.probability * 100).toFixed(1)}%</span>
-      <span class="badge ${isPos ? 'pos' : 'neg'}">${result.classification}</span>
-      <span class="threshold-note">阈值: ${(result.threshold * 100).toFixed(1)}%</span>
+      <span class="badge ${isPos ? 'pos' : 'neg'}">${classificationEn}</span>
+      <span class="threshold-note">Threshold: ${(result.threshold * 100).toFixed(1)}%</span>
     </div>`;
 
   /* 基模型概率 */
@@ -63,19 +64,19 @@ export function renderPrediction(result) {
   /* 插补提示 */
   const fillNote = document.querySelector('#imputationNote');
   if (result.imputed_count && result.imputed_count > 0) {
-    fillNote.textContent = `注意：有 ${result.imputed_count} 个缺失值已被中位数插补。`;
+    fillNote.textContent = `Note: ${result.imputed_count} missing value(s) imputed with median.`;
     fillNote.style.display = '';
   } else {
     fillNote.style.display = 'none';
   }
-  document.querySelector('#featureCount').textContent = `输入特征: ${result.feature_values.length}`;
+  document.querySelector('#featureCount').textContent = `Input Features: ${result.feature_values.length}`;
 
   /* ---- SHAP 贡献表格 ---- */
   const contributions = result.shap?.contributions || [];
   const sorted = [...contributions].sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));
   const tbody = sorted.map((it, i) => {
     const cls = it.shap_value >= 0 ? 'contribution-positive' : 'contribution-negative';
-    const typeMap = { base_model_probability: '基模型概率', clinical_direct: '临床直接特征' };
+    const typeMap = { base_model_probability: 'Base Model Prob.', clinical_direct: 'Clinical Feature' };
     const val = it.value !== undefined && it.value !== null ? (typeof it.value === 'number' ? fmt(it.value) : String(it.value)) : '—';
     return `<tr>
       <td>${i + 1}</td><td>${it.key}</td><td>${typeMap[it.source_type] || it.source_type || '—'}</td>
@@ -86,7 +87,7 @@ export function renderPrediction(result) {
 
   const additivity = result.shap?.additivity_error;
   const addRow = additivity !== undefined && Math.abs(additivity) > 1e-6
-    ? `<tr><td colspan="4" style="color:var(--muted)">可加性误差</td><td style="color:var(--muted)">${fmt(additivity, 6)}</td></tr>` : '';
+    ? `<tr><td colspan="4" style="color:var(--muted)">Additivity Error</td><td style="color:var(--muted)">${fmt(additivity, 6)}</td></tr>` : '';
   document.querySelector('#shapTableBody').innerHTML = tbody + addRow;
 
   /* ---- SHAP 图片（shap 库原生生成） ---- */

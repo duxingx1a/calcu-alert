@@ -15,7 +15,7 @@ function setBusy(value) {
   busy = value;
   const button = document.querySelector('#calculateButton');
   button.disabled = value;
-  button.textContent = value ? '正在计算…' : '计算风险并解释';
+  button.textContent = value ? 'Calculating…' : 'Calculate Risk & Explain';
 }
 
 function highlightSample(index) {
@@ -28,8 +28,8 @@ async function initialise() {
   try {
     metadata = await getMetadata();
     renderForm(metadata);
-    document.querySelector('#featureCount').textContent = `${metadata.features.length} 个临床特征`;
-    setStatus(true, '计算引擎已就绪');
+    document.querySelector('#featureCount').textContent = `${metadata.features.length} clinical features`;
+    setStatus(true, 'Engine Ready');
 
     let examples = SAMPLES;
     try {
@@ -42,7 +42,7 @@ async function initialise() {
     }
 
     const samplesEl = document.querySelector('#samples');
-    samplesEl.innerHTML = examples.map((item, index) => `<button type="button" class="sample-card" data-sample="${index}" title="填充示例病例">${item.name || ('示例' + (index + 1))}</button>`).join('');
+    samplesEl.innerHTML = examples.map((item, index) => `<button type="button" class="sample-card" data-sample="${index}" title="Fill example case">${item.name || ('Case ' + (index + 1))}</button>`).join('');
     document.querySelectorAll('[data-sample]').forEach((button) => {
       button.addEventListener('click', () => {
         const idx = Number(button.dataset.sample);
@@ -61,7 +61,7 @@ async function initialise() {
     // 滚动到计算按钮区域，让用户一进来就能计算
     document.querySelector('.quickbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (error) {
-    setStatus(false, `计算引擎未就绪：${error.message}`);
+    setStatus(false, `Engine not ready: ${error.message}`);
   }
 }
 
