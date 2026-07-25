@@ -1,6 +1,6 @@
-import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250729';
-import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250729';
-import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250729';
+import { getExamples, getHealth, getMetadata, predict } from './api-client.js?v=250730';
+import { collapseAllSections, fillValues, readValues, renderForm, SAMPLES, validate } from './feature-schema.js?v=250730';
+import { clearResult, renderPrediction, toggleResultPanel } from './shap-view.js?v=250730';
 
 let metadata;
 let busy = false;
@@ -59,7 +59,7 @@ async function submitForm(event) {
     collapseAllSections();
   } catch (error) {
     document.querySelector('#resultSummary').innerHTML = `<div class="error-box">${error.message}</div>`;
-    document.querySelector('#resultPanel').hidden = false;
+    document.querySelector('#resultPanel').classList.remove('hidden-panel');
   } finally {
     setBusy(false);
   }

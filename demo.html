@@ -26,7 +26,7 @@
       <p class="disclaimer">本工具用于科研演示和模型复现，不构成诊断、治疗建议或临床决策依据。请勿输入可识别患者身份的信息。</p>
     </form>
 
-    <section id="resultPanel" class="panel result-panel" aria-live="polite" hidden>
+    <section id="resultPanel" class="panel result-panel hidden-panel" aria-live="polite">
       <div class="panel-header"><h2>三、计算结果</h2><small id="featureCount"></small></div>
       <div id="resultSummary" class="result-summary"></div><p id="imputationNote" class="result-note"></p>
       <div class="subgrid"><article class="subpanel prob-panel"><h3>各模型阳性概率</h3><div id="baseProbabilities" class="prob-grid"></div></article><article class="subpanel legend-panel"><h3>图例</h3><p class="caption">红色：推高风险<br>蓝色：降低风险</p></article></div>
@@ -36,6 +36,6 @@
       <div class="actions"><button id="toggleResult" class="secondary" type="button">收起结果</button></div>
     </section>
   </main>
-  <script type="module" src="assets/js/demo-app.js?v=250729"></script>
+  <script type="module" src="assets/js/demo-app.js?v=250730"></script>
 </body>
 </html>
