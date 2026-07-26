@@ -3,145 +3,205 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study. 799,824 samples; stacked ensemble; SHAP explainability; multicentre validation.">
-<meta name="keywords" content="urolithiasis, machine learning, ensemble learning, stacked generalization, SHAP, risk prediction, routine health check-up, non-imaging biomarkers">
-<title>Urolithiasis Screening · Ensemble Learning with Non-imaging Biomarkers</title>
+<title>CalcuAlert &middot; Urolithiasis Screening with Ensemble Learning</title>
+<meta name="description" content="Population-scale screening for urolithiasis using ensemble machine learning on non-imaging biomarkers from routine health check-ups.">
 <link rel="stylesheet" href="paper.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
 </head>
 <body>
 
-<header class="site-nav">
+<!-- Navigation -->
+<nav class="site-nav">
   <div class="site-nav__inner">
-    <a class="brand" href="index.html" aria-label="Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study">
-      <span><span class="brand__name">Urolithiasis Screening</span></span>
+    <a class="brand" href="index.html">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#315c4d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2"/>
+      </svg>
+      <span class="brand__name">CalcuAlert</span>
     </a>
-    <nav class="nav-links" aria-label="Main navigation">
+    <div class="nav-links">
       <a href="#highlights">Highlights</a>
-      <a href="#shap">Explainability</a>
-      <a class="nav-cta" href="demo.html">Live Demo ↗</a>
-    </nav>
+      <a href="#explainability">Explainability</a>
+      <a href="#external">External Validation</a>
+      <a class="nav-cta" href="demo.html">Live Demo &nearr;</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <div class="hero__grid">
+      <div class="hero__title-row">
+        <div class="eyebrow">Urolithiasis Screening &middot; Multicentre Study</div>
+        <h1 class="hero__title">
+          Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups
+        </h1>
+      </div>
+      <div class="hero__explain">
+        <p class="hero__lede">
+          Stacking ensemble model trained on <strong>799,824</strong> routine health check-up records,
+          using non-imaging biomarkers (blood tests, urinalysis, anthropometry, questionnaires).
+          Internal AUROC <strong>0.7164</strong>; external validation AUROC
+          <strong>0.6867&ndash;0.6939</strong> across three independent centres.
+          Model-guided CT screening at top-5% risk reduced cost per detected case by
+          <strong>79.3%</strong> and number needed to image by <strong>82.6%</strong>.
+          Top-1% risk stratification achieved PPV <strong>40.03%</strong> &mdash;
+          a ~10&times; increase over baseline prevalence.
+          A low-cost, accessible triage tool for population-scale screening, particularly
+          in resource-constrained settings.
+        </p>
+        <div class="hero__actions">
+          <a class="button button--primary" href="https://github.com/duxingx1a/calcu-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a class="button button--icon" href="demo.html">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Live Demo
+          </a>
+          <a class="button button--icon" href="code.html">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Source Code
+          </a>
+        </div>
+        <p class="hero__note">
+          <span class="status-dot"></span>
+          Research Preview &middot; Explainability &amp; External Validation
+        </p>
+      </div>
+    </div>
   </div>
 </header>
 
-<main>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container hero__grid">
-      <div class="hero__title-row">
-        <h1 class="hero__title">Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study</h1>
-      </div>
-      <div class="hero__explain">
-        <p class="hero__lede">Stacking ensemble model trained on 799,824 routine health check-up records, using non-imaging biomarkers (blood tests, urinalysis, anthropometry, questionnaires). Internal AUROC 0.7164; external validation AUROC 0.6867–0.6939 across three independent centres. Model-guided CT screening at top-5% risk reduced cost per detected case by 79.3% and number needed to image by 82.6%. Top-1% risk stratification achieved PPV 40.03% — a ~10× increase over baseline prevalence. A low-cost, accessible triage tool for population-scale screening, particularly in resource-constrained settings.</p>
-        <div class="hero__actions">
-          <a class="button button--icon" href="https://github.com/duxingx1a/calcu-alert" target="_blank">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-          </a>
-          <a class="button button--primary" href="demo.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Live Demo
-          </a>
-        </div>
-        <div class="hero__note"><span class="status-dot" aria-hidden="true"></span> Research Preview · Explainability &amp; External Validation</div>
-      </div>
+<!-- Highlights -->
+<section class="section" id="highlights">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">01 / Highlights</div>
+      <h2>Key Results</h2>
     </div>
-  </section>
-
-  <!-- Key Metrics -->
-  <section class="section section--tight" id="highlights" aria-label="Key research metrics">
-    <div class="container">
-      <div class="section-heading">
-        <p class="eyebrow">01 / Highlights</p>
-        <h2>Key Results</h2>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric__value">799,824</div>
+        <div class="metric__label">Total Sample</div>
+        <div class="metric__desc">Health check-up cohort from routine examination centres</div>
       </div>
-      <div class="metrics">
-        <div class="metric"><div class="metric__value">799,824</div><div class="metric__label">Total Sample · Health Check-up Cohort</div><div class="metric__desc">Real-world data from routine health examination centres</div></div>
-        <div class="metric"><div class="metric__value">0.7164</div><div class="metric__label">Internal Validation AUROC</div><div class="metric__desc">Stacking XGBoost ensemble model</div></div>
-        <div class="metric"><div class="metric__value">181,336</div><div class="metric__label">External Validation Sample</div><div class="metric__desc">Independent multicentre external validation</div></div>
-        <div class="metric"><div class="metric__value">↓79.3%</div><div class="metric__label">Cost per Case Detected (Top-5%)</div><div class="metric__desc">Cost reduction vs. random screening</div></div>
+      <div class="metric">
+        <div class="metric__value">0.7164</div>
+        <div class="metric__label">Internal AUROC</div>
+        <div class="metric__desc">Stacking XGBoost ensemble model</div>
       </div>
-    </div>
-  </section>
-
-  <!-- SHAP Explainability -->
-  <section class="section" id="shap">
-    <div class="container">
-      <div class="section-heading">
-        <p class="eyebrow">02 / Explainability</p>
-        <h2>Model Explainability</h2>
-        <p>SHAP (SHapley Additive exPlanations) reveals the direction and magnitude of each feature's contribution to individual predictions, ensuring transparent and auditable model decisions.</p>
+      <div class="metric">
+        <div class="metric__value">181,336</div>
+        <div class="metric__label">External Validation</div>
+        <div class="metric__desc">Independent multicentre external validation samples</div>
       </div>
-      <div class="figure-grid figure-grid--shap">
-        <article class="figure-card figure-card--featured shap-card--main">
-          <h3>Global Feature Contributions: Risk is not a black box</h3>
-          <div class="figure-card__media" data-lightbox="png/fig4a_shap_stacking_beeswarm.png" data-caption="SHAP beeswarm plot: global feature contributions of the stacking ensemble model"><img class="figure-card__image figure-card__image--shrink" src="png/fig4a_shap_stacking_beeswarm.png" alt="Stacking ensemble SHAP beeswarm plot" loading="lazy"></div>
-          <p class="figure-card__caption">SHAP beeswarm plot showing direction and magnitude of each feature's contribution, colour-coded by raw feature value.</p>
-        </article>
-        <article class="figure-card figure-card--featured shap-card--dependence">
-          <h3>Non-linear Effects of Key Variables</h3>
-          <div class="figure-card__media" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP dependence plot: non-linear effects of key variables"><img class="figure-card__image" src="png/fig3b_shap_dependence.png" alt="SHAP dependence plot" loading="lazy"></div>
-          <p class="figure-card__caption">Dependence plots reveal non-linear relationships between individual biomarkers and predicted risk.</p>
-        </article>
+      <div class="metric">
+        <div class="metric__value">&darr;79.3%</div>
+        <div class="metric__label">Cost per Case (Top-5%)</div>
+        <div class="metric__desc">Cost reduction vs. random screening</div>
       </div>
-    </div>
-  </section>
-
-  <!-- External Validation -->
-  <section class="section" id="external">
-    <div class="container">
-      <div class="section-heading">
-        <p class="eyebrow">03 / External Validation</p>
-        <h2>External Validation</h2>
-        <p>Generalisation performance evaluated on 181,336 independent external validation samples.</p>
-      </div>
-      <div class="figure-grid figure-grid--wide">
-        <article class="figure-card">
-          <h3>External Validation ROC</h3>
-          <div class="figure-card__media" data-lightbox="png/fig_ext_validation_roc.png" data-caption="External validation ROC curves"><img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="External validation ROC curve" loading="lazy"></div>
-          <p class="figure-card__caption">ROC curve of Stacking XGBoost on the external validation set, AUROC 0.7123.</p>
-        </article>
-        <article class="figure-card">
-          <h3>Feature Correlation Heatmap</h3>
-          <div class="figure-card__media" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="Feature correlation heatmap"><img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="Feature correlation heatmap" loading="lazy"></div>
-          <p class="figure-card__caption">Correlation heatmap across 77 input features.</p>
-        </article>
-        <article class="figure-card">
-          <h3>Probability Density Distribution</h3>
-          <div class="figure-card__media" data-lightbox="png/figS3_probability_density.png" data-caption="Probability density distribution"><img class="figure-card__image" src="png/figS3_probability_density.png" alt="Probability density distribution" loading="lazy"></div>
-          <p class="figure-card__caption">Comparison of model output probability density between positive and negative samples.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- PhotoSwipe -->
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="pswp__bg"></div>
-  <div class="pswp__scroll-wrap">
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    <div class="pswp__ui pswp__ui--hidden">
-      <div class="pswp__top-bar">
-        <div class="pswp__counter"></div>
-        <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-        <div class="pswp__preloader"><div class="pswp__preloader__icn"><div class="pswp__preloader__cut"><div class="pswp__preloader__donut"></div></div></div></div>
-      </div>
-      <button class="pswp__button pswp__button--arrow--left" title="Previous"></button>
-      <button class="pswp__button pswp__button--arrow--right" title="Next"></button>
-      <div class="pswp__caption"><div class="pswp__caption__center"></div></div>
     </div>
   </div>
-</div>
+</section>
 
-<footer class="footer"><div class="container footer__inner"><div>© 2026 Urolithiasis Screening Study · West China Hospital, Sichuan University</div><div class="footer__links"><a href="#highlights">Highlights</a><a href="#shap">Explainability</a><a href="demo.html">Demo</a><a href="https://github.com/duxingx1a/calcu-alert" target="_blank">GitHub</a></div></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/umd/photoswipe.umd.min.js" defer></script>
-<script src="paper-lightbox.js" defer></script>
+<!-- Explainability -->
+<section class="section" id="explainability">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">02 / Explainability</div>
+      <h2>Model Explainability</h2>
+      <p>
+        SHAP (SHapley Additive exPlanations) reveals the direction and magnitude of
+        each feature's contribution to individual predictions, ensuring transparent
+        and auditable model decisions.
+      </p>
+    </div>
+    <div class="figure-grid figure-grid--shap">
+      <div class="figure-card">
+        <h3>Global Feature Contributions: Risk Is Not a Black Box</h3>
+        <button class="figure-card__media" data-lightbox="png/fig3a_shap_beeswarm.png" data-caption="SHAP beeswarm plot: feature importance &amp; direction">
+          <img class="figure-card__image figure-card__image--shrink" src="png/fig3a_shap_beeswarm.png" alt="SHAP beeswarm" loading="lazy">
+        </button>
+        <div class="figure-card__caption">
+          SHAP beeswarm plot showing direction and magnitude of each feature's contribution,
+          colour-coded by raw feature value.
+        </div>
+      </div>
+      <div class="figure-card">
+        <h3>Non-linear Effects of Key Variables</h3>
+        <button class="figure-card__media" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP dependence plots: non-linear biomarker effects">
+          <img class="figure-card__image figure-card__image--shrink" src="png/fig3b_shap_dependence.png" alt="SHAP dependence" loading="lazy">
+        </button>
+        <div class="figure-card__caption">
+          Dependence plots reveal non-linear relationships between individual biomarkers
+          and predicted risk.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- External Validation -->
+<section class="section" id="external">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">03 / External Validation</div>
+      <h2>External Validation</h2>
+      <p>
+        Generalisation performance evaluated on 181,336 independent external validation
+        samples across three centres.
+      </p>
+    </div>
+    <div class="figure-grid figure-grid--wide">
+      <div class="figure-card">
+        <h3>External Validation ROC</h3>
+        <button class="figure-card__media" data-lightbox="png/fig_ext_validation_roc.png" data-caption="External validation ROC curves across 3 centres">
+          <img class="figure-card__image" src="png/fig_ext_validation_roc.png" alt="External validation ROC" loading="lazy">
+        </button>
+        <div class="figure-card__caption">
+          ROC curves of Stacking XGBoost on three independent external validation sets.
+        </div>
+      </div>
+      <div class="figure-card">
+        <h3>Feature Correlation Heatmap</h3>
+        <button class="figure-card__media" data-lightbox="png/figS1_correlation_heatmap.png" data-caption="Correlation heatmap of 77 input features">
+          <img class="figure-card__image" src="png/figS1_correlation_heatmap.png" alt="Correlation heatmap" loading="lazy">
+        </button>
+        <div class="figure-card__caption">
+          Pearson correlation heatmap across 77 input features.
+        </div>
+      </div>
+      <div class="figure-card">
+        <h3>Probability Density Distribution</h3>
+        <button class="figure-card__media" data-lightbox="png/figS3_probability_density.png" data-caption="Probability density distribution by class">
+          <img class="figure-card__image" src="png/figS3_probability_density.png" alt="Probability density" loading="lazy">
+        </button>
+        <div class="figure-card__caption">
+          Comparison of model output probability density between positive and negative samples.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner container">
+    <span>&copy; 2026 Urolithiasis Screening Study &middot; West China Hospital, Sichuan University</span>
+    <div class="footer__links">
+      <a href="#highlights">Highlights</a>
+      <a href="#explainability">Explainability</a>
+      <a href="demo.html">Demo</a>
+      <a href="https://github.com/duxingx1a/calcu-alert">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<!-- PhotoSwipe Lightbox -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/umd/photoswipe-lightbox.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.4/umd/photoswipe.umd.min.js"></script>
+<script src="paper-lightbox.js"></script>
+
 </body>
 </html>

@@ -1,90 +1,84 @@
-<p align="center">
-  <img src="pg/png/fig4a_shap_stacking_beeswarm.png" alt="CalcuAlert" width="100%">
-</p>
+# CalcuAlert
 
-<h1 align="center">CalcuAlert</h1>
+**Population-scale Screening for Urolithiasis Using Ensemble Machine Learning on Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study**
 
 <p align="center">
-  <b>基于常规体检生物标志物的集成学习尿路结石筛查研究</b><br>
-  <i>Ensemble Learning for Urinary Stone Screening Using Routine Health Examination Biomarkers</i>
+  <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/Status-Under%20Review-yellow" alt="Status">
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/Samples-981%2C160-informational" alt="Samples">
 </p>
 
-<p align="center">
-  <a href="https://duxingx1a.github.io/calcu-alert/"><img src="https://img.shields.io/badge/Project_Page-Online-2563eb?style=flat-square" alt="Project Page"></a>
-  <a href="https://duxingx1a.github.io/calcu-alert/demo.html"><img src="https://img.shields.io/badge/Demo-Online-brightgreen?style=flat-square" alt="Demo"></a>
-  <a href="https://github.com/duxingx1a/calcu-alert"><img src="https://img.shields.io/badge/Code-GitHub-181717?style=flat-square&logo=github" alt="GitHub"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"></a>
-</p>
-
-<p align="center">
-  <b>四川大学华西医院泌尿外科</b>
-</p>
+**West China Hospital, Sichuan University · Department of Urology**
 
 ---
 
-## 📰 新闻
+## News
 
-- **2026.07.25** — 在线风险计算器上线，支持 87 维 SHAP 实时解释
-- **2026.07.20** — 外部验证完成，Stacking AUROC 0.7123
-- **2026.07.18** — CalcuAlert 项目代码与数据集发布
-
----
-
-## 🎯 核心贡献
-
-| 指标 | 数值 |
-|------|------|
-| 总样本量 | **799,824** 例体检人群 |
-| 外部验证 | **181,336** 例独立样本 |
-| 内部 AUROC | **0.7164** (Stacking XGBoost) |
-| 外部 AUROC | **0.7123** |
-| 特征维度 | 77 项常规体检指标 |
-| 成本降低 | **−79.3%** (Top-5% 每例检出成本) |
+- **2026.07.25** — Online risk calculator launched with 87-dimensional SHAP real-time explanation
+- **2026.07.20** — External validation completed; Stacking AUROC **0.7123**
+- **2026.07.18** — CalcuAlert codebase and dataset released
 
 ---
 
-## 🏗️ 模型架构
+## Key Results
+
+| Metric | Value |
+|--------|-------|
+| Total Sample Size | **799,824** health check-up individuals |
+| External Validation | **181,336** independent samples from 3 centres |
+| Internal AUROC | **0.7164** (Stacking XGBoost) |
+| External AUROC | **0.7123** |
+| Feature Dimension | **77** routine health examination biomarkers |
+| Cost Reduction | **−79.3%** (Top-5% cost per detected case) |
+
+---
+
+## Model Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                   77 项常规体检特征                               │
-│  (血常规 · 尿常规 · 肝功能 · 肾功能 · 血脂 · 人体测量 · 生命体征) │
+│             77 Routine Health Examination Biomarkers             │
+│  (Blood · Urinalysis · Liver Function · Renal Function          │
+│   Lipids · Anthropometry · Vital Signs)                         │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   10 个异质基模型 (5-Fold OOF)                    │
-│                                                                  │
-│  LightGBM  XGBoost  CatBoost  GradientBoosting  LogisticRegression│
-│  GaussianNB  DecisionTree  RandomForest  AdaBoost  MLP          │
+│         10 Heterogeneous Base Learners (5-Fold OOF)             │
+│                                                                 │
+│  LightGBM   XGBoost    CatBoost    GradientBoosting            │
+│  LogisticRegression   GaussianNB   DecisionTree                 │
+│  RandomForest   AdaBoost   MLP                                  │
 └───────────────────────────┬─────────────────────────────────────┘
-                            │ 10 个 OOF 概率
+                            │  10 OOF probabilities
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│              XGBoost 元学习器 (87 维输入)                         │
-│              10 OOF 概率 + 77 原始特征                           │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Platt 概率校准                                 │
+│           XGBoost Meta-Learner (87-Dimensional Input)           │
+│            10 OOF Probabilities + 77 Raw Features                │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│              87 维 SHAP 可解释性分析                              │
-│          (在元模型原始边际空间进行 SHAP 归因)                      │
+│                     Platt Probability Calibration                │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│           87-Dimensional SHAP Interpretability Analysis          │
+│     (SHAP attribution performed on the meta-model's original     │
+│                       marginal space)                            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📊 性能对比
+## Performance
 
-### 内部验证 (n=239,947)
+### Internal Validation (n = 239,947)
 
-| 模型 | AUROC | AUPRC | 敏感性 | 特异性 | PPV | NPV | F1 |
-|------|:-----:|:-----:|:------:|:------:|:---:|:---:|:--:|
+| Model | AUROC | AUPRC | Sensitivity | Specificity | PPV | NPV | F1 |
+|-------|:-----:|:-----:|:-----------:|:-----------:|:---:|:---:|:--:|
 | **Stacking (XGBoost)** | **0.7164** | **0.3102** | 0.6667 | 0.6510 | 0.1030 | **0.9720** | **0.1784** |
 | XGBoost | 0.7081 | 0.3010 | 0.6667 | 0.6370 | 0.0996 | 0.9710 | 0.1734 |
 | LightGBM | 0.7075 | 0.2990 | 0.6667 | 0.6360 | 0.0994 | 0.9710 | 0.1731 |
@@ -97,78 +91,78 @@
 | DecisionTree | 0.6721 | 0.2620 | 0.6667 | 0.5860 | 0.0885 | 0.9700 | 0.1563 |
 | GaussianNB | 0.6721 | 0.2620 | 0.6667 | 0.5860 | 0.0885 | 0.9700 | 0.1563 |
 
-### 外部验证 (n=181,336)
+### External Validation (n = 181,336)
 
-| 模型 | AUROC |
-|------|:-----:|
+| Model | AUROC |
+|-------|:-----:|
 | **Stacking (XGBoost)** | **0.7123** |
-| XGBoost | 0.7062 |
 | LightGBM | 0.7089 |
+| XGBoost | 0.7062 |
 | CatBoost | 0.7041 |
 
 ---
 
-## 📈 关键图表
+## Key Figures
 
-### ROC 曲线
+### ROC Curves
 
-<p align="center">
-  <img src="pg/png/fig1_roc_all_models.png" alt="全模型 ROC 曲线" width="80%">
-</p>
+![ROC curves across all models](png/fig1_roc_all_models.png)
 
-### SHAP 可解释性
+ROC curves of the stacking ensemble and all base models on the internal validation set.
 
-<p align="center">
-  <img src="pg/png/fig4a_shap_stacking_beeswarm.png" alt="SHAP 蜂群图" width="80%">
-</p>
+### SHAP Explainability
 
-### 成本效益分析
+![SHAP beeswarm plot](png/fig4a_shap_stacking_beeswarm.png)
 
-<p align="center">
-  <img src="pg/png/fig7_topk_analysis.png" alt="Top-K 风险分层分析" width="80%">
-</p>
+SHAP-based feature importance ranking with 87-dimensional model interpretability.
 
----
+### Cost-Effectiveness Analysis
 
-## 📦 数据集
+![Cost-effectiveness](png/fig_cost_analysis.png)
 
-| 数据集 | 样本量 | 阳性率 | 来源 | 用途 |
-|--------|:------:|:------:|------|------|
-| 训练集 | 559,877 | 4.2% | 体检中心 A | 模型训练与 5 折交叉验证 |
-| 内部验证集 | 239,947 | 4.2% | 体检中心 A | 内部性能评估 |
-| 外部验证集 | 181,336 | 3.1% | 体检中心 B（独立） | 外部泛化验证 |
-| **合计** | **981,160** | — | — | — |
+Model-guided Top-5% risk stratification reduces cost per detected case by 79.3%.
 
 ---
 
-## 🚀 快速开始
+## Dataset
 
-### 在线体验
+| Dataset | Samples | Prevalence | Source | Purpose |
+|---------|:------:|:----------:|--------|---------|
+| Training Set | 559,877 | 4.2% | Health Check-up Centre A | Model training & 5-fold cross-validation |
+| Internal Validation | 239,947 | 4.2% | Health Check-up Centre A | Internal performance evaluation |
+| External Validation | 181,336 | 3.1% | Health Check-up Centre B (independent) | External generalisation validation |
+| **Total** | **981,160** | — | — | — |
 
-访问 **[CalcuAlert 在线计算器](https://duxingx1a.github.io/calcu-alert/demo.html)** 体验实时风险预测与 SHAP 解释。
+---
 
-### 本地运行
+## Quick Start
+
+### Online Demo
+
+Visit the **[CalcuAlert Risk Calculator](https://duxingx1a.github.io/calcu-alert/demo.html)** for real-time risk prediction with SHAP explanation.
+
+### Local Setup
 
 ```bash
-# 克隆仓库
+# Clone the repository
 git clone https://github.com/duxingx1a/calcu-alert.git
 cd calcu-alert
 
-# 安装依赖
+# Install dependencies
 pip install -r requirements.txt
 
-# 启动 API 服务
+# Start the API server
 python api_server.py
 ```
 
-### Docker 部署
+### Docker
 
 ```bash
 docker build -t calcualert-api .
 docker run -d -p 5000:5000 calcualert-api
 ```
 
-### API 调用
+### API Usage
 
 ```python
 import requests
@@ -180,7 +174,7 @@ response = requests.post(
             "Gender": 1,
             "Age": 45,
             "Uric_WBC": 10,
-            # ... 其他 77 项特征
+            # ... remaining 77 features
         }
     }
 )
@@ -189,20 +183,21 @@ print(response.json())
 
 ---
 
-## 📖 引用
+## Citation
 
 ```bibtex
 @article{calcualert2026,
-  title={CalcuAlert: A Stacking Ensemble Framework for Urinary Stone Risk Prediction Using Routine Health Examination Biomarkers},
-  author={...},
-  journal={...},
-  year={2026}
+  title     = {CalcuAlert: Population-scale Screening for Urolithiasis Using
+               Ensemble Machine Learning on Non-imaging Biomarkers from
+               Routine Health Check-ups: A Multicentre Retrospective Study},
+  author    = {...},
+  journal   = {...},
+  year      = {2026}
 }
 ```
 
 ---
 
 <p align="center">
-  <b>CalcuAlert</b> · 四川大学华西医院泌尿外科 © 2026<br>
-  <sub>Built with ❤️ for better stone screening</sub>
+  <sub>CalcuAlert · West China Hospital, Sichuan University &copy; 2026</sub>
 </p>
