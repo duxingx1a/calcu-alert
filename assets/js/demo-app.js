@@ -89,6 +89,7 @@ async function submitForm(event) {
     document.querySelector('#resultPanel').style.display = '';
   } finally {
     setBusy(false);
+    document.querySelector('#resultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
