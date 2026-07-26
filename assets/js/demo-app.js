@@ -40,7 +40,7 @@ async function initialise() {
         examples = remote.examples;
       }
     } catch (e) {
-      console.warn('远程示例不可用，使用本地预置示例');
+      console.warn('Remote examples unavailable; using local presets');
     }
 
     const samplesEl = document.querySelector('#samples');
@@ -60,12 +60,12 @@ async function initialise() {
     document.querySelector('#resetButton').addEventListener('click', () => { document.querySelector('#calculatorForm').reset(); clearResult(); currentExampleLabel = null; exampleModified = false; });
     document.querySelector('#toggleResult').addEventListener('click', toggleResultPanel);
 
-    // 默认填充病例 #1 并高亮
+    // Auto-fill Case #1 and highlight
     fillValues(metadata, examples[0].values);
     highlightSample(0);
     currentExampleLabel = examples[0].label ?? null;
 
-    // 滚动到计算按钮区域，让用户一进来就能计算
+    // Scroll to the calculate area
     document.querySelector('.quickbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (error) {
     setStatus(false, `Engine not ready: ${error.message}`);

@@ -12,7 +12,7 @@
         var caption = el.dataset.caption || '';
         var img = el.querySelector('img');
 
-        // 从页面已有的图片获取原始尺寸
+        // Get original dimensions from the existing page image
         var w = (img && img.naturalWidth)  ? img.naturalWidth  : 1600;
         var h = (img && img.naturalHeight) ? img.naturalHeight : 1200;
 
@@ -29,7 +29,7 @@
           wheelToZoom: true,
         });
 
-        // 标题更新
+        // Caption update
         pswp.on('change', function () {
           var cap = document.querySelector('.pswp__caption .pswp__caption__center');
           if (cap) {
@@ -37,7 +37,7 @@
           }
         });
 
-        // 初始化后立即设置标题
+        // Set caption immediately after init
         pswp.on('firstUpdate', function () {
           var cap = document.querySelector('.pswp__caption .pswp__caption__center');
           if (cap) {

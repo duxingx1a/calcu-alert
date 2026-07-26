@@ -1,16 +1,16 @@
 /* ================================================================
- * CalcuAlert · SHAP 可视化模块
- * 后端 shap 库 + matplotlib 生成 PNG 图片，前端仅负责加载展示
+ * CalcuAlert · SHAP Visualization Module
+ * Backend shap + matplotlib generates PNGs; frontend loads & displays
  * ================================================================ */
 
-/* ---------- 工具 ---------- */
+/* ---------- Utilities ---------- */
 function fmt(v, d) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? '—' : Number(v).toFixed(d || 3); }
 
-/* ---------- 颜色常量 ---------- */
+/* ---------- Color Constants ---------- */
 const SHAP_RED  = '#FF0D57';
 const SHAP_BLUE = '#1E88E5';
 
-/* ---------- 结果面板 ---------- */
+/* ---------- Result Panel ---------- */
 function panel() { return document.querySelector('#resultPanel'); }
 function toggleBar() { return document.querySelector('#resultToggleBar'); }
 
@@ -21,13 +21,11 @@ export function toggleResultPanel(show) {
 
   const isToggle = typeof show !== 'boolean';
   if (isToggle) {
-    // 切换模式：根据当前面板状态反转，按钮栏始终可见
     show = p.style.display === 'none';
   }
 
   const s = show ? '' : 'none';
   p.style.display = s;
-  // 按钮栏始终可见（切换时不隐藏），仅在清空时隐藏
   if (!isToggle) {
     t.style.display = s;
   }
@@ -37,11 +35,10 @@ export function toggleResultPanel(show) {
   }
 }
 
-/* ---------- 核心：渲染预测结果 ---------- */
+/* ---------- Core: Render Prediction Result ---------- */
 export function renderPrediction(result, realLabel) {
-  const isPos = result.classification === '阳性';
+  const isPos = result.classification === 'Positive';
   const classificationEn = isPos ? 'Positive' : 'Negative';
-  /* 概要 */
   const isPosGround = realLabel === 1;
   const groundTruth = realLabel !== null && realLabel !== undefined
     ? (isPosGround ? 'Stone (Positive)' : 'No Stone (Negative)') : '';
@@ -61,7 +58,7 @@ export function renderPrediction(result, realLabel) {
     </div>
     ${labelHtml}`;
 
-  /* 基模型概率 */
+  /* Base model probabilities */
   const baseHtml = (result.base_model_probabilities || [])
     .map((p, i) =>
       `<div class="prob-cell">
@@ -72,7 +69,7 @@ export function renderPrediction(result, realLabel) {
     .join('');
   document.querySelector('#baseProbabilities').innerHTML = baseHtml;
 
-  /* 插补提示 */
+  /* Imputation note */
   const fillNote = document.querySelector('#imputationNote');
   if (result.imputed_count && result.imputed_count > 0) {
     fillNote.textContent = `Note: ${result.imputed_count} missing value(s) imputed with median.`;
@@ -82,7 +79,7 @@ export function renderPrediction(result, realLabel) {
   }
   document.querySelector('#featureCount').textContent = `Input Features: ${result.feature_values.length}`;
 
-  /* ---- SHAP 贡献表格 ---- */
+  /* ---- SHAP Contribution Table ---- */
   const contributions = result.shap?.contributions || [];
   const sorted = [...contributions].sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));
   const tbody = sorted.map((it, i) => {
@@ -101,19 +98,18 @@ export function renderPrediction(result, realLabel) {
     ? `<tr><td colspan="4" style="color:var(--muted)">Additivity Error</td><td style="color:var(--muted)">${fmt(additivity, 6)}</td></tr>` : '';
   document.querySelector('#shapTableBody').innerHTML = tbody + addRow;
 
-  /* ---- SHAP 图片（shap 库原生生成） ---- */
+  /* ---- SHAP Images ---- */
   renderShapImages(result);
 
-  /* 显示面板 */
+  /* Show panel */
   panel().offsetHeight;
   toggleResultPanel(true);
 }
 
-/* ---------- 加载 shap 库生成的原生图片 ---------- */
+/* ---------- Load SHAP Images ---------- */
 function renderShapImages(result) {
   const images = result.shap_images || {};
 
-  // Waterfall
   const wfImg = document.querySelector('#waterfallPlotImg');
   if (wfImg) {
     if (images.waterfall) {
@@ -121,16 +117,16 @@ function renderShapImages(result) {
       wfImg.style.display = 'block';
       wfImg.onerror = () => {
         wfImg.style.display = 'none';
-        console.warn('Waterfall 图片加载失败');
+        console.warn('Waterfall image failed to load');
       };
     } else {
       wfImg.style.display = 'none';
-      console.warn('后端未返回 Waterfall 图片');
+      console.warn('Backend did not return a Waterfall image');
     }
   }
 }
 
-/* ---------- 清空结果 ---------- */
+/* ---------- Clear Results ---------- */
 export function clearResult() {
   toggleResultPanel(false);
   document.querySelector('#resultSummary').innerHTML = '';
@@ -139,7 +135,6 @@ export function clearResult() {
   document.querySelector('#imputationNote').style.display = 'none';
   document.querySelector('#shapTableBody').innerHTML = '';
 
-  // 清除图片
   const wfImg = document.querySelector('#waterfallPlotImg');
   if (wfImg) { wfImg.src = ''; wfImg.style.display = 'none'; }
 }

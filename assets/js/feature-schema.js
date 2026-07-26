@@ -135,7 +135,6 @@ function fillValues(metadata, values) {
     const element = document.querySelector(`#feature-${index}`);
     if (!element) return;
     const v = values[definition.key];
-    // 分类字段用原值，数值字段截 3 位小数
     const isCategory = CATEGORY_OPTIONS[definition.key];
     element.value = isCategory ? v : Number(v).toFixed(3);
   });

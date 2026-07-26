@@ -12,10 +12,10 @@ async function requestJson(path, options = {}) {
     const contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('application/json')) {
       const text = await response.text().then(t => t.slice(0, 300));
-      throw new Error(`服务器未返回 JSON（${response.status}）`);
+      throw new Error(`Server returned non-JSON response (${response.status})`);
     }
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || `请求失败（${response.status}）`);
+    if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
     return data;
   } finally {
     clearTimeout(timeout);
