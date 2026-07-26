@@ -63,7 +63,7 @@ button { cursor: pointer; font: inherit; }
 .hero__title { font-size: 34px; font-weight: 800; line-height: 1.25; letter-spacing: -0.5px; margin-bottom: 0; color: #142221; text-wrap: balance; text-align: center; }
 .hero__title em { color: #315c4d; font-style: normal; }
 .hero__explain { grid-area: explain; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.hero__lede { font-size: 16px; color: #4b5563; line-height: 1.8; margin-bottom: 24px; max-width: 800px; }
+.hero__lede { font-size: 16px; color: #4b5563; line-height: 1.8; margin-bottom: 24px; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center; }
 
 /* --- Icon Buttons --- */
