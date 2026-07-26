@@ -30,15 +30,13 @@ button { cursor: pointer; font: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; color: #1a1a2e; text-decoration: none; }
 .brand:hover { text-decoration: none; }
 .brand__name { font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
-.brand__sub { display: block; font-size: 10px; color: #6b7280; letter-spacing: .3px; text-transform: uppercase; margin-top: -1px; }
 .nav-links { display: flex; align-items: center; gap: 20px; }
 .nav-links a {
   display: inline-flex; align-items: center;
   font-size: 13px; color: #4b5563; font-weight: 500;
-  padding: 6px 14px; border: 1px solid #d6ded8; border-radius: 6px;
-  text-decoration: none; transition: all .2s;
+  padding: 6px 14px; text-decoration: none; transition: all .2s;
 }
-.nav-links a:hover { color: #315c4d; border-color: #315c4d; background: #dfeee6; text-decoration: none; }
+.nav-links a:hover { color: #315c4d; text-decoration: none; }
 .nav-cta {
   background: #1a1a2e; color: #fff !important; padding: 6px 16px; border-radius: 6px;
   font-size: 13px; font-weight: 600; border-color: #1a1a2e;
@@ -62,7 +60,7 @@ button { cursor: pointer; font: inherit; }
 .hero { padding: 80px 0 48px; }
 .hero__grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "title title" "explain visual"; gap: 36px 48px; align-items: center; }
 .hero__title-row { grid-area: title; padding-bottom: 24px; border-bottom: 1px solid #d6ded8; }
-.hero__title { font-size: 42px; font-weight: 800; line-height: 1.2; letter-spacing: -1px; margin-bottom: 0; color: #142221; }
+.hero__title { font-size: 34px; font-weight: 800; line-height: 1.25; letter-spacing: -0.5px; margin-bottom: 0; color: #142221; text-wrap: balance; }
 .hero__title em { color: #315c4d; font-style: normal; }
 .hero__explain { grid-area: explain; display: flex; flex-direction: column; justify-content: center; }
 .hero-visual { grid-area: visual; }
@@ -144,12 +142,7 @@ button { cursor: pointer; font: inherit; }
   transition: box-shadow .2s;
 }
 .figure-card:hover { box-shadow: 0 2px 16px rgba(0,0,0,.06); }
-.figure-card__head {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 14px 16px 0;
-}
-.figure-card__kicker { font-size: 10px; font-weight: 600; color: #315c4d; letter-spacing: .5px; text-transform: uppercase; }
-.figure-card__head h3 { font-size: 14px; font-weight: 600; margin-top: 2px; }
+.figure-card > h3 { font-size: 14px; font-weight: 600; margin: 14px 16px 2px; }
 .figure-card__zoom {
   background: none; border: 1px solid #e2e8f0; border-radius: 4px;
   padding: 2px 8px; font-size: 11px; color: #6b7280; white-space: nowrap;
@@ -199,7 +192,7 @@ button { cursor: pointer; font: inherit; }
 @media (max-width: 900px) {
   .hero__grid { grid-template-columns: 1fr; grid-template-areas: "title" "visual" "explain"; }
   .hero__title-row { padding-bottom: 20px; }
-  .hero__title { font-size: 32px; }
+  .hero__title { font-size: 26px; }
   .metrics { grid-template-columns: repeat(2,1fr); }
   .figure-grid { grid-template-columns: 1fr; }
   .figure-grid--wide { grid-template-columns: 1fr; }
@@ -208,4 +201,8 @@ button { cursor: pointer; font: inherit; }
   .pipeline__arrow { transform: rotate(90deg); }
   .nav-links { display: none; }
   .footer__inner { flex-direction: column; gap: 8px; }
+}
+
+@media (max-width: 480px) {
+  .hero__title { font-size: 20px; }
 }
