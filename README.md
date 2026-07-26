@@ -1,5 +1,3 @@
-# CalcuAlert
-
 **Population-scale Screening for Urolithiasis Using Ensemble Machine Learning on Non-imaging Biomarkers from Routine Health Check-ups: A Multicentre Retrospective Study**
 
 <p align="center">
