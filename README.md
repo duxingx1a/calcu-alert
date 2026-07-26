@@ -125,7 +125,7 @@ All metrics computed at the optimal threshold determined by Youden's J statistic
 ### Cost-Effectiveness Analysis
 
 <p align="center">
-  <img src="png/fig_cost_effectiveness_all_strategies.png" alt="Cost-effectiveness" width="620">
+  <img src="png/fig_cost_effectiveness_comprehensive.png" alt="Cost-effectiveness" width="620">
 </p>
 
 *Model-guided Top-5% risk stratification reduces cost per detected case by 79.3%.*
@@ -145,20 +145,5 @@ All metrics computed at the optimal threshold determined by Youden's J statistic
 
 ## Quick Start
 
-### Online Demo
-
-Visit the **[CalcuAlert Risk Calculator](https://duxingx1a.github.io/calcu-alert/demo.html)** for real-time risk prediction with SHAP explanation.
-
-### Local Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/duxingx1a/calcu-alert.git
-cd calcu-alert
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the API server
-python api_server.py
-```
+- **Online Demo**: **[CalcuAlert Risk Calculator](https://duxingx1a.github.io/calcu-alert/demo.html)** — real-time risk prediction with SHAP explanation
+- **Project Page**: **[https://duxingx1a.github.io/calcu-alert/index.html](https://duxingx1a.github.io/calcu-alert/index.html)**
