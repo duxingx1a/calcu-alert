@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CalcuAlert &middot; Urolithiasis Screening with Ensemble Learning</title>
+<title>UroScreen &middot; Urolithiasis Screening with Ensemble Learning</title>
 <meta name="description" content="Population-scale screening for urolithiasis using ensemble machine learning on non-imaging biomarkers from routine health check-ups.">
 <link rel="stylesheet" href="paper.css">
 </head>
@@ -16,7 +16,7 @@
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#315c4d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2"/>
       </svg>
-      <span class="brand__name">CalcuAlert</span>
+      <span class="brand__name">UroScreen</span>
     </a>
     <div class="nav-links">
       <a href="#highlights">Highlights</a>
@@ -29,16 +29,14 @@
 
 <!-- Hero -->
 <header class="hero">
+  <div class="hero__title-row">
+    <div class="eyebrow">Urolithiasis Screening &middot; Multicentre Study</div>
+    <h1 class="hero__title">
+      Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups
+    </h1>
+  </div>
   <div class="container">
-    <div class="hero__grid">
-      <div class="hero__title-row">
-        <div class="eyebrow">Urolithiasis Screening &middot; Multicentre Study</div>
-        <h1 class="hero__title">
-          Population-scale Screening for Urolithiasis Using Ensemble Learning with Non-imaging Biomarkers from Routine Health Check-ups
-        </h1>
-      </div>
-      <div class="hero__explain">
-        <p class="hero__lede">
+    <div class="hero__explain">        <h2 class="hero__abstract-label">Abstract</h2>        <p class="hero__lede">
           Stacking ensemble model trained on <strong>799,824</strong> routine health check-up records,
           using non-imaging biomarkers (blood tests, urinalysis, anthropometry, questionnaires).
           Internal AUROC <strong>0.7164</strong>; external validation AUROC
@@ -51,7 +49,7 @@
           in resource-constrained settings.
         </p>
         <div class="hero__actions">
-          <a class="button button--primary" href="https://github.com/duxingx1a/calcu-alert">
+          <a class="button button--primary" href="https://github.com/duxingx1a/uro-screen">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
             GitHub
           </a>
@@ -59,17 +57,12 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             Live Demo
           </a>
-          <a class="button button--icon" href="code.html">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            Source Code
-          </a>
         </div>
         <p class="hero__note">
           <span class="status-dot"></span>
           Research Preview &middot; Explainability &amp; External Validation
         </p>
       </div>
-    </div>
   </div>
 </header>
 
@@ -114,14 +107,15 @@
       <p>
         SHAP (SHapley Additive exPlanations) reveals the direction and magnitude of
         each feature's contribution to individual predictions, ensuring transparent
-        and auditable model decisions.
+        and auditable model decisions. Both global feature importance and individual
+        prediction drivers are presented for clinical interpretation.
       </p>
     </div>
     <div class="figure-grid figure-grid--shap">
       <div class="figure-card">
         <h3>Global Feature Contributions: Risk Is Not a Black Box</h3>
         <button class="figure-card__media" data-lightbox="png/fig3a_shap_beeswarm.png" data-caption="SHAP beeswarm plot: feature importance &amp; direction">
-          <img class="figure-card__image figure-card__image--shrink" src="png/fig3a_shap_beeswarm.png" alt="SHAP beeswarm" loading="lazy">
+          <img class="figure-card__image figure-card__image--sm" src="png/fig3a_shap_beeswarm.png" alt="SHAP beeswarm" loading="lazy">
         </button>
         <div class="figure-card__caption">
           SHAP beeswarm plot showing direction and magnitude of each feature's contribution,
@@ -131,7 +125,7 @@
       <div class="figure-card">
         <h3>Non-linear Effects of Key Variables</h3>
         <button class="figure-card__media" data-lightbox="png/fig3b_shap_dependence.png" data-caption="SHAP dependence plots: non-linear biomarker effects">
-          <img class="figure-card__image figure-card__image--shrink" src="png/fig3b_shap_dependence.png" alt="SHAP dependence" loading="lazy">
+          <img class="figure-card__image figure-card__image--lg" src="png/fig3b_shap_dependence.png" alt="SHAP dependence" loading="lazy">
         </button>
         <div class="figure-card__caption">
           Dependence plots reveal non-linear relationships between individual biomarkers
@@ -150,7 +144,9 @@
       <h2>External Validation</h2>
       <p>
         Generalisation performance evaluated on 181,336 independent external validation
-        samples across three centres.
+        samples across three centres. Model discrimination and calibration were assessed
+        in diverse clinical settings to confirm robustness and transportability of the
+        stacking ensemble approach.
       </p>
     </div>
     <div class="figure-grid figure-grid--wide">
@@ -193,7 +189,7 @@
       <a href="#highlights">Highlights</a>
       <a href="#explainability">Explainability</a>
       <a href="demo.html">Demo</a>
-      <a href="https://github.com/duxingx1a/calcu-alert">GitHub</a>
+      <a href="https://github.com/duxingx1a/uro-screen">GitHub</a>
     </div>
   </div>
 </footer>

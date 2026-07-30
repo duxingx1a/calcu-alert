@@ -1,5 +1,5 @@
 /* ================================================================
- * CalcuAlert · SHAP Visualization Module
+ * UroScreen · SHAP Visualization Module
  * Backend shap + matplotlib generates PNGs; frontend loads & displays
  * ================================================================ */
 

@@ -15,7 +15,7 @@
 
 - **2026.07.25** — Online risk calculator launched with 87-dimensional SHAP real-time explanation
 - **2026.07.20** — External validation completed; Stacking AUROC **0.7164**
-- **2026.07.18** — CalcuAlert codebase and dataset released
+- **2026.07.18** — UroScreen codebase and dataset released
 
 ---
 
@@ -145,5 +145,5 @@ All metrics computed at the optimal threshold determined by Youden's J statistic
 
 ## Quick Start
 
-- **Online Demo**: **[CalcuAlert Risk Calculator](https://duxingx1a.github.io/calcu-alert/demo.html)** — real-time risk prediction with SHAP explanation
-- **Project Page**: **[https://duxingx1a.github.io/calcu-alert/index.html](https://duxingx1a.github.io/calcu-alert/index.html)**
+- **Online Demo**: **[UroScreen Risk Calculator](https://duxingx1a.github.io/uro-screen/demo.html)** — real-time risk prediction with SHAP explanation
+- **Project Page**: **[https://duxingx1a.github.io/uro-screen/index.html](https://duxingx1a.github.io/uro-screen/index.html)**
